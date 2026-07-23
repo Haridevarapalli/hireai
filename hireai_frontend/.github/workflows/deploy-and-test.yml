@@ -1,0 +1,122 @@
+name: Deploy and Test E2E
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    # Export outputs for the testing job
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+          cache-dependency-path: 'smarthire/package-lock.json'
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        working-directory: smarthire
+        run: npm ci
+
+      - name: Build with Next.js
+        working-directory: smarthire
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./smarthire/out
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install Dependencies
+        working-directory: smarthire/e2e_tests
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      # Install Chrome & ChromeDriver automatically via selenium (Selenium 4.6+ handles drivers automatically)
+      # But we ensure Chrome is available on the runner
+      - name: Ensure Chrome is installed
+        uses: browser-actions/setup-chrome@v1
+        
+      - name: Create Test Results Directories
+        working-directory: smarthire/e2e_tests
+        run: |
+          mkdir -p "Test Results/Excel"
+          mkdir -p "Test Results/HTML"
+          mkdir -p "Test Results/Screenshots"
+          mkdir -p "Test Results/Logs"
+          mkdir -p "Test Results/Summary"
+          
+      - name: Run Selenium Tests
+        working-directory: smarthire/e2e_tests
+        env:
+          BASE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          # Use pytest with html and junitxml output
+          pytest tests/ --html="Test Results/HTML/execution-report.html" --self-contained-html --junitxml="Test Results/report.xml" -v || true
+          
+      - name: Generate Custom Reports
+        working-directory: smarthire/e2e_tests
+        env:
+          BASE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          python utils/report_generator.py
+          
+      - name: Publish Summary to GitHub Step Summary
+        working-directory: smarthire/e2e_tests
+        run: |
+          cat "Test Results/Summary/summary.md" >> $GITHUB_STEP_SUMMARY
+          
+      - name: Upload Test Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Automation-Test-Reports
+          path: smarthire/e2e_tests/Test Results/
+          retention-days: 14

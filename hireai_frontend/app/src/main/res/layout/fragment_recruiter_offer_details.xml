@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/recruiter_surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_16">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/recruiter_offer_details_toolbar"
+            style="@style/Widget.HireAI.Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="Offer Details" />
+
+        <ProgressBar
+            android:id="@+id/recruiter_offer_details_loading"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_24"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/recruiter_offer_details_state"
+            layout="@layout/view_list_state" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/recruiter_offer_details_card"
+            style="@style/Widget.HireAI.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            app:cardCornerRadius="@dimen/radius_16"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/recruiter_stroke"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_16">
+
+                <TextView
+                    android:id="@+id/recruiter_offer_details_candidate"
+                    style="@style/TextAppearance.HireAI.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Candidate" />
+
+                <TextView
+                    android:id="@+id/recruiter_offer_details_job"
+                    style="@style/TextAppearance.HireAI.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_8"
+                    android:text="Job title" />
+
+                <TextView
+                    android:id="@+id/recruiter_offer_details_status"
+                    style="@style/TextAppearance.HireAI.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_8"
+                    android:text="Status" />
+
+                <TextView
+                    android:id="@+id/recruiter_offer_details_created"
+                    style="@style/TextAppearance.HireAI.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_4"
+                    android:text="Created" />
+
+                <Button
+                    android:id="@+id/recruiter_offer_details_update_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginTop="@dimen/spacing_16"
+                    android:text="Update Status"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

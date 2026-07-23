@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/recruiter_surface">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/recruiter_offers_toolbar"
+        style="@style/Widget.HireAI.Toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:layout_marginEnd="@dimen/spacing_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Offers" />
+
+    <ImageButton
+        android:id="@+id/recruiter_offers_search_action"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Search offers"
+        android:padding="@dimen/spacing_12"
+        android:src="@drawable/ic_search"
+        android:tint="@color/recruiter_toolbar_icon"
+        app:layout_constraintBottom_toBottomOf="@id/recruiter_offers_toolbar"
+        app:layout_constraintEnd_toEndOf="@id/recruiter_offers_toolbar"
+        app:layout_constraintTop_toTopOf="@id/recruiter_offers_toolbar" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/recruiter_offers_search_card"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:layout_marginEnd="@dimen/spacing_16"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/recruiter_card"
+        app:cardCornerRadius="@dimen/radius_16"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/recruiter_stroke"
+        app:strokeWidth="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruiter_offers_toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="@dimen/spacing_12"
+            android:paddingEnd="@dimen/spacing_8">
+
+            <ImageView
+                android:id="@+id/recruiter_offers_search_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_search"
+                android:tint="@color/text_secondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/recruiter_offers_search_input"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@android:color/transparent"
+                android:hint="Search offers"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="@dimen/spacing_12"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/recruiter_offers_search_clear"
+                app:layout_constraintStart_toEndOf="@id/recruiter_offers_search_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/recruiter_offers_search_clear"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Clear search"
+                android:padding="8dp"
+                android:src="@drawable/ic_close"
+                android:tint="@color/text_secondary"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <HorizontalScrollView
+        android:id="@+id/recruiter_offer_filter_scroll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:layout_marginEnd="@dimen/spacing_16"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruiter_offers_search_card"
+        app:layout_goneMarginTop="@dimen/spacing_8">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/recruiter_offer_filter_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/filter_all"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="All" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/filter_pending"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pending" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/filter_negotiating"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Negotiating" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/filter_signed"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Signed" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recruiter_offers_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/spacing_24"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruiter_offer_filter_scroll" />
+
+    <ProgressBar
+        android:id="@+id/recruiter_offers_loading"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/recruiter_offers_list"
+        app:layout_constraintEnd_toEndOf="@id/recruiter_offers_list"
+        app:layout_constraintStart_toStartOf="@id/recruiter_offers_list"
+        app:layout_constraintTop_toTopOf="@id/recruiter_offers_list" />
+
+    <include
+        android:id="@+id/recruiter_offers_state"
+        layout="@layout/view_list_state"
+        app:layout_constraintBottom_toBottomOf="@id/recruiter_offers_list"
+        app:layout_constraintEnd_toEndOf="@id/recruiter_offers_list"
+        app:layout_constraintStart_toStartOf="@id/recruiter_offers_list"
+        app:layout_constraintTop_toTopOf="@id/recruiter_offers_list" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

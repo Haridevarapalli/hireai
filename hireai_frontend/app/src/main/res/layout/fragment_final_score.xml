@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light">
+
+    <TextView
+        android:id="@+id/final_score_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HireAI"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/final_score_heading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"        android:layout_marginTop="20dp"
+        android:text="You did it, Candidate!"
+        android:textColor="@color/text_primary"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/final_score_title"
+        app:layout_constraintWidth_percent="0.88" />
+
+    <TextView
+        android:id="@+id/final_score_body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"        android:layout_marginTop="8dp"
+        android:text="Your performance exceeded our benchmark. A\nformal offer is waiting for you."
+        android:textColor="@color/text_secondary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/final_score_heading"
+        app:layout_constraintWidth_percent="0.88" />
+
+    <FrameLayout
+        android:id="@+id/final_score_image"
+        android:layout_width="0dp"
+        android:layout_height="320dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_image_placeholder_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/final_score_body"
+        app:layout_constraintWidth_percent="0.88">
+
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center"
+            android:contentDescription="Cap"
+            android:src="@drawable/ic_hat" />
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/final_score_cta"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_button_primary"
+        android:text="View Offer"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.88" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

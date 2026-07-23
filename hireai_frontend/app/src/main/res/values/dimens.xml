@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spacing_4">4dp</dimen>
+    <dimen name="spacing_8">8dp</dimen>
+    <dimen name="spacing_12">12dp</dimen>
+    <dimen name="spacing_16">16dp</dimen>
+    <dimen name="spacing_20">20dp</dimen>
+    <dimen name="spacing_24">24dp</dimen>
+    <dimen name="radius_12">12dp</dimen>
+    <dimen name="radius_16">16dp</dimen>
+    <dimen name="list_row_min_height_56">56dp</dimen>
+    <dimen name="screen_padding">24dp</dimen>
+    <dimen name="section_spacing">20dp</dimen>
+    <dimen name="field_height">56dp</dimen>
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="card_radius">16dp</dimen>
+    <dimen name="chip_radius">14dp</dimen>
+    <dimen name="input_radius">14dp</dimen>
+    <dimen name="image_radius">18dp</dimen>
+    <dimen name="tab_height">48dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="progress_height">8dp</dimen>
+</resources>

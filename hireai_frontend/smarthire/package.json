@@ -1,0 +1,47 @@
+{
+  "name": "smarthire",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test:e2e": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" e2e/runner.ts",
+    "test:e2e-mobile": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" e2e_mobile/runner.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.10.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.45.2",
+    "framer-motion": "^12.40.0",
+    "jose": "^6.2.3",
+    "lucide-react": "^1.17.0",
+    "next": "16.2.7",
+    "pdfjs-dist": "^3.11.174",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "recharts": "^3.8.1",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/selenium-webdriver": "^4.35.6",
+    "appium": "^3.5.2",
+    "autocannon": "^8.0.0",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.7",
+    "exceljs": "^4.4.0",
+    "selenium-webdriver": "^4.46.0",
+    "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "webdriverio": "^9.30.0"
+  }
+}

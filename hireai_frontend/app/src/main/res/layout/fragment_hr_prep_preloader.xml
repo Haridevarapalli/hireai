@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light"
+    android:fitsSystemWindows="true"
+    android:paddingTop="@dimen/spacing_8"
+    android:paddingBottom="@dimen/spacing_24">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/hr_prep_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginEnd="@dimen/spacing_16"
+        android:background="@android:color/transparent"
+        app:navigationIcon="@drawable/ic_back"
+        app:titleCentered="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/hr_prep_step_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Step 1/3"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <TextView
+        android:id="@+id/hr_prep_heading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_24"
+        android:layout_marginEnd="@dimen/spacing_16"
+        android:text="Synthesizing your profile"
+        android:textColor="@color/text_primary"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hr_prep_toolbar" />
+
+    <TextView
+        android:id="@+id/hr_prep_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_12"
+        android:layout_marginEnd="@dimen/spacing_16"
+        android:lineSpacingExtra="2dp"
+        android:text="Mapping your experience to the HR assessment database."
+        android:textColor="@color/text_secondary"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hr_prep_heading" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/hr_prep_image_card"
+        android:layout_width="0dp"
+        android:layout_height="260dp"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_20"
+        android:layout_marginEnd="@dimen/spacing_16"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/bg_light_alt"
+        app:cardCornerRadius="@dimen/radius_16"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/recruiter_stroke"
+        app:strokeWidth="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hr_prep_subtitle">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:contentDescription="Question bank"
+            android:src="@drawable/ic_brain" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/hr_prep_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_20"
+        android:layout_marginEnd="@dimen/spacing_16"
+        android:text="Analyzing Resume Context"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hr_prep_image_card"
+        app:layout_goneMarginTop="@dimen/spacing_20" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/hr_prep_progress"
+        android:layout_width="0dp"
+        android:layout_height="8dp"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_12"
+        android:layout_marginEnd="@dimen/spacing_16"
+        app:indicatorColor="@color/progress_fill_light"
+        app:trackColor="@color/progress_track_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hr_prep_label" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/hr_prep_next"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_24"
+        android:layout_marginEnd="@dimen/spacing_16"
+        android:layout_marginBottom="@dimen/spacing_8"
+        android:text="Next"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:backgroundTint="@color/primary_blue"
+        app:cornerRadius="@dimen/radius_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:rippleColor="#33FFFFFF"
+        app:iconTint="@android:color/white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

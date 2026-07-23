@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light"
+    android:fitsSystemWindows="true"
+    android:paddingStart="@dimen/spacing_16"
+    android:paddingTop="@dimen/spacing_8"
+    android:paddingEnd="@dimen/spacing_16"
+    android:paddingBottom="@dimen/spacing_24">
+
+    <TextView
+        android:id="@+id/step3_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Step 3 of 3"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/step3_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"        android:layout_marginTop="24dp"
+        android:text="Optimizing Difficulty"
+        android:textColor="@color/text_primary"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/step3_title"
+        app:layout_constraintWidth_percent="0.88" />
+
+    <TextView
+        android:id="@+id/step3_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"        android:layout_marginTop="10dp"
+        android:text="Calibrating assessment difficulty to match your\nreported skill levels."
+        android:textColor="@color/text_secondary"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/step3_header"
+        app:layout_constraintWidth_percent="0.88" />
+
+    <TextView
+        android:id="@+id/step3_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"        android:layout_marginTop="26dp"
+        android:text="Ideal"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/step3_subtitle"
+        app:layout_constraintWidth_percent="0.88" />
+
+    <ProgressBar
+        android:id="@+id/step3_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/progress_height"
+        android:layout_marginTop="10dp"
+        android:progress="70"
+        android:progressDrawable="@drawable/progress_horizontal_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/step3_label"
+        app:layout_constraintWidth_percent="0.88" />
+
+    <Button
+        android:id="@+id/step3_next"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_button_primary"
+        android:text="Next"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.86" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

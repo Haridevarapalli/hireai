@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_light">
+
+    <TextView
+        android:id="@+id/synth_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HireAI"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/synth_heading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"        android:layout_marginTop="18dp"
+        android:text="Synthesizing assessment\nresults and generating\nyour final score profile..."
+        android:textColor="@color/text_primary"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/synth_title"
+        app:layout_constraintWidth_percent="0.88" />
+
+    <ProgressBar
+        android:id="@+id/synth_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/progress_height"
+        android:layout_marginTop="16dp"
+        android:progress="80"
+        android:progressDrawable="@drawable/progress_horizontal_light"
+        app:layout_constraintEnd_toEndOf="@id/synth_heading"
+        app:layout_constraintStart_toStartOf="@id/synth_heading"
+        app:layout_constraintTop_toBottomOf="@id/synth_heading" />
+
+    <FrameLayout
+        android:id="@+id/synth_image"
+        android:layout_width="0dp"
+        android:layout_height="320dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_teal_card"
+        app:layout_constraintEnd_toEndOf="@id/synth_heading"
+        app:layout_constraintStart_toStartOf="@id/synth_heading"
+        app:layout_constraintTop_toBottomOf="@id/synth_progress">
+
+        <ImageView
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_gravity="center"
+            android:contentDescription="Brain"
+            android:src="@drawable/ic_brain" />
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/recruiter_surface">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/recruiter_applicants_list_toolbar"
+        style="@style/Widget.HireAI.Toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:layout_marginEnd="@dimen/spacing_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Applicants" />
+
+    <TextView
+        android:id="@+id/recruiter_applicants_list_job_title"
+        style="@style/TextAppearance.HireAI.Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_16"
+        android:layout_marginTop="@dimen/spacing_8"
+        android:layout_marginEnd="@dimen/spacing_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruiter_applicants_list_toolbar"
+        android:text="Job Title" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recruiter_applicants_list_recycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_8"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruiter_applicants_list_job_title" />
+
+    <ProgressBar
+        android:id="@+id/recruiter_applicants_list_loading"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/recruiter_applicants_list_recycler"
+        app:layout_constraintEnd_toEndOf="@id/recruiter_applicants_list_recycler"
+        app:layout_constraintStart_toStartOf="@id/recruiter_applicants_list_recycler"
+        app:layout_constraintTop_toTopOf="@id/recruiter_applicants_list_recycler" />
+
+    <include
+        android:id="@+id/recruiter_applicants_list_state"
+        layout="@layout/view_list_state"
+        app:layout_constraintBottom_toBottomOf="@id/recruiter_applicants_list_recycler"
+        app:layout_constraintEnd_toEndOf="@id/recruiter_applicants_list_recycler"
+        app:layout_constraintStart_toStartOf="@id/recruiter_applicants_list_recycler"
+        app:layout_constraintTop_toTopOf="@id/recruiter_applicants_list_recycler" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

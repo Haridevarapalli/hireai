@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/spacing_16"
+    android:layout_marginEnd="@dimen/spacing_16"
+    android:layout_marginBottom="@dimen/spacing_12"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/recruiter_card"
+    app:cardCornerRadius="@dimen/radius_16"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/recruiter_stroke"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="136dp"
+        android:padding="@dimen/spacing_16">
+
+        <TextView
+            android:id="@+id/job_card_company_initials"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_logo_tile"
+            android:gravity="center"
+            android:text="TC"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/job_card_type_pill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip_light"
+            android:paddingStart="10dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="4dp"
+            android:text="Full-time"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/job_card_status_pill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_chip_subtle"
+            android:paddingStart="10dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="4dp"
+            android:text="In Progress"
+            android:textColor="@color/text_primary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/job_card_type_pill" />
+
+        <TextView
+            android:id="@+id/job_card_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_12"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="Software Engineer"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/job_card_type_pill"
+            app:layout_constraintStart_toEndOf="@id/job_card_company_initials"
+            app:layout_constraintTop_toTopOf="@id/job_card_company_initials" />
+
+        <TextView
+            android:id="@+id/job_card_company"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_12"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="TechCore Inc."
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/job_card_type_pill"
+            app:layout_constraintStart_toEndOf="@id/job_card_company_initials"
+            app:layout_constraintTop_toBottomOf="@id/job_card_title" />
+
+        <TextView
+            android:id="@+id/job_card_action_hint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/job_card_company"
+            app:layout_constraintEnd_toStartOf="@id/job_card_status_pill"
+            app:layout_constraintTop_toBottomOf="@id/job_card_company" />
+
+        <ImageView
+            android:id="@+id/job_card_clock_icon"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="@dimen/spacing_8"
+            android:contentDescription="Posted"
+            android:src="@drawable/ic_clock"
+            android:tint="@color/text_secondary"
+            app:layout_constraintStart_toStartOf="@id/job_card_company"
+            app:layout_constraintTop_toBottomOf="@id/job_card_action_hint" />
+
+        <TextView
+            android:id="@+id/job_card_posted_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="2 days ago"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@id/job_card_clock_icon"
+            app:layout_constraintStart_toEndOf="@id/job_card_clock_icon"
+            app:layout_constraintTop_toTopOf="@id/job_card_clock_icon" />
+
+        <ImageView
+            android:id="@+id/job_card_location_icon"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="@dimen/spacing_8"
+            android:contentDescription="Location"
+            android:src="@drawable/ic_location_pin"
+            app:layout_constraintStart_toStartOf="@id/job_card_clock_icon"
+            app:layout_constraintTop_toBottomOf="@id/job_card_clock_icon" />
+
+        <TextView
+            android:id="@+id/job_card_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="@dimen/spacing_8"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="San Francisco, CA"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/job_card_location_icon"
+            app:layout_constraintEnd_toStartOf="@id/job_card_salary"
+            app:layout_constraintStart_toEndOf="@id/job_card_location_icon"
+            app:layout_constraintTop_toTopOf="@id/job_card_location_icon" />
+
+        <TextView
+            android:id="@+id/job_card_salary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_12"
+            android:text="$120k - $180k"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/job_card_location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/job_card_location" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fitsSystemWindows="true">
+
+    <ImageView
+        android:id="@+id/hr_mcq_close"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="@dimen/spacing_16"
+        android:contentDescription="Close"
+        android:src="@drawable/ic_close"
+        android:tint="@color/text_on_dark"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/hr_mcq_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HR MCQ"
+        android:textColor="@color/text_on_dark"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/hr_mcq_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/hr_mcq_close" />
+
+    <TextView
+        android:id="@+id/hr_mcq_question"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="Question 2 of 5"
+        android:textColor="@color/text_muted_on_dark"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hr_mcq_title"
+        app:layout_constraintWidth_percent="0.88" />
+
+    <ProgressBar
+        android:id="@+id/hr_mcq_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/progress_height"
+        android:layout_marginTop="10dp"
+        android:progress="45"
+        android:progressDrawable="@drawable/progress_horizontal_dark"
+        app:layout_constraintEnd_toEndOf="@id/hr_mcq_question"
+        app:layout_constraintStart_toStartOf="@id/hr_mcq_question"
+        app:layout_constraintTop_toBottomOf="@id/hr_mcq_question" />
+
+    <FrameLayout
+        android:id="@+id/hr_mcq_image"
+        android:layout_width="0dp"
+        android:layout_height="260dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_image_placeholder_light"
+        app:layout_constraintEnd_toEndOf="@id/hr_mcq_question"
+        app:layout_constraintStart_toStartOf="@id/hr_mcq_question"
+        app:layout_constraintTop_toBottomOf="@id/hr_mcq_progress" />
+
+    <TextView
+        android:id="@+id/hr_mcq_prompt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="You're managing a team where two members\nhave conflicting ideas on a project"
+        android:textColor="@color/text_on_dark"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/hr_mcq_question"
+        app:layout_constraintStart_toStartOf="@id/hr_mcq_question"
+        app:layout_constraintTop_toBottomOf="@id/hr_mcq_image" />
+
+    <LinearLayout
+        android:id="@+id/hr_mcq_options"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="@id/hr_mcq_question"
+        app:layout_constraintStart_toStartOf="@id/hr_mcq_question"
+        app:layout_constraintTop_toBottomOf="@id/hr_mcq_prompt">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_option_dark"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_radio_selected" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:text="Ignore the conflict and let them resolve it on their own."
+                android:textColor="@color/text_on_dark"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_option_dark"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_radio_unselected" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:text="Facilitate a discussion to understand both perspectives and find a compromise."
+                android:textColor="@color/text_on_dark"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_option_dark"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_radio_unselected" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:text="Take sides with the team member whose idea aligns with your preference."
+                android:textColor="@color/text_on_dark"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_option_dark"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_radio_unselected" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:text="Assign the task to another team member to avoid the conflict."
+                android:textColor="@color/text_on_dark"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/hr_mcq_next"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_button_primary"
+        android:text="Next"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.88" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

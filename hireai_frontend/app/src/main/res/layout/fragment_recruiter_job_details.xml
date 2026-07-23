@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/recruiter_surface"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_16">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/recruiter_job_details_toolbar"
+            style="@style/Widget.HireAI.Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="Job Details" />
+
+        <ProgressBar
+            android:id="@+id/recruiter_job_details_loading"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_24"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/recruiter_job_details_state"
+            layout="@layout/view_list_state" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/recruiter_job_details_card"
+            style="@style/Widget.HireAI.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            app:cardCornerRadius="@dimen/radius_16"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/recruiter_stroke"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_16">
+
+                <TextView
+                    android:id="@+id/recruiter_job_details_title"
+                    style="@style/TextAppearance.HireAI.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Job title" />
+
+                <TextView
+                    android:id="@+id/recruiter_job_details_company"
+                    style="@style/TextAppearance.HireAI.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_4"
+                    android:text="Company" />
+
+                <TextView
+                    android:id="@+id/recruiter_job_details_meta"
+                    style="@style/TextAppearance.HireAI.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_8"
+                    android:text="Location • Role • Salary" />
+
+                <TextView
+                    android:id="@+id/recruiter_job_details_match_threshold"
+                    style="@style/TextAppearance.HireAI.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_4"
+                    android:text="Min match score: 70%" />
+
+                <TextView
+                    android:id="@+id/recruiter_job_details_created"
+                    style="@style/TextAppearance.HireAI.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_4"
+                    android:text="Posted recently" />
+
+                <LinearLayout
+                    android:id="@+id/recruiter_job_details_skills_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_12"
+                    android:orientation="horizontal" />
+
+                <Button
+                    android:id="@+id/recruiter_job_details_view_applicants"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginTop="@dimen/spacing_16"
+                    android:text="View Applicants"
+                    android:textAllCaps="false" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_12"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/recruiter_job_details_close"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="Close Job"
+                        android:textAllCaps="false" />
+
+                    <Space
+                        android:layout_width="@dimen/spacing_12"
+                        android:layout_height="1dp" />
+
+                    <Button
+                        android:id="@+id/recruiter_job_details_delete"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/button_height"
+                        android:layout_weight="1"
+                        android:text="Delete"
+                        android:textAllCaps="false" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

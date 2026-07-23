@@ -1,0 +1,620 @@
+// ─── Recruiter Stats ────────────────────────────────────────────────
+export const recruiterStats = [
+  {
+    id: "total-jobs",
+    label: "Total Jobs Posted",
+    value: 145,
+    change: "+12",
+    changeType: "positive" as const,
+    icon: "Briefcase",
+    gradient: "gradient-card-blue",
+    color: "#3b82f6",
+  },
+  {
+    id: "active-jobs",
+    label: "Active Jobs",
+    value: 24,
+    change: "+3",
+    changeType: "positive" as const,
+    icon: "Briefcase",
+    gradient: "gradient-card-purple",
+    color: "#8b5cf6",
+  },
+  {
+    id: "total-applicants",
+    label: "Total Applicants",
+    value: 1284,
+    change: "+128",
+    changeType: "positive" as const,
+    icon: "Users",
+    gradient: "gradient-card-blue",
+    color: "#3b82f6",
+  },
+  {
+    id: "shortlisted",
+    label: "Shortlisted Candidates",
+    value: 342,
+    change: "+28",
+    changeType: "positive" as const,
+    icon: "Star",
+    gradient: "gradient-card-amber",
+    color: "#f59e0b",
+  },
+  {
+    id: "interviews",
+    label: "Interviews Scheduled",
+    value: 67,
+    change: "+12",
+    changeType: "positive" as const,
+    icon: "Video",
+    gradient: "gradient-card-purple",
+    color: "#8b5cf6",
+  },
+  {
+    id: "open-positions",
+    label: "Open Positions",
+    value: 48,
+    change: "+5",
+    changeType: "positive" as const,
+    icon: "Target",
+    gradient: "gradient-card-green",
+    color: "#22c55e",
+  },
+];
+
+// ─── Applicant Trends (Monthly) ─────────────────────────────────────
+export const applicantTrendsData = [
+  { month: "Jan", total: 180, screened: 120, shortlisted: 45 },
+  { month: "Feb", total: 220, screened: 150, shortlisted: 58 },
+  { month: "Mar", total: 250, screened: 175, shortlisted: 72 },
+  { month: "Apr", total: 310, screened: 220, shortlisted: 88 },
+  { month: "May", total: 380, screened: 280, shortlisted: 110 },
+  { month: "Jun", total: 420, screened: 320, shortlisted: 135 },
+  { month: "Jul", total: 460, screened: 350, shortlisted: 148 },
+  { month: "Aug", total: 510, screened: 390, shortlisted: 162 },
+  { month: "Sep", total: 540, screened: 410, shortlisted: 175 },
+  { month: "Oct", total: 620, screened: 470, shortlisted: 195 },
+  { month: "Nov", total: 680, screened: 520, shortlisted: 218 },
+  { month: "Dec", total: 750, screened: 580, shortlisted: 245 },
+];
+
+// ─── Applicant Sources ──────────────────────────────────────────────
+export const applicantSourcesData = [
+  { name: "LinkedIn", value: 42, color: "#0077B5" },
+  { name: "College Portal", value: 25, color: "#8b5cf6" },
+  { name: "Company Website", value: 20, color: "#3b82f6" },
+  { name: "Referrals", value: 13, color: "#22c55e" },
+];
+
+// ─── Recent Applicants ──────────────────────────────────────────────
+export const recentApplicants = [
+  {
+    id: 1,
+    name: "Priya Sharma",
+    avatar: "PS",
+    role: "Senior React Developer",
+    matchScore: 94,
+    status: "Shortlisted",
+    date: "2026-05-30",
+    avatarColor: "#8b5cf6",
+  },
+  {
+    id: 2,
+    name: "Rahul Mehta",
+    avatar: "RM",
+    role: "Full Stack Engineer",
+    matchScore: 89,
+    status: "AI Screening",
+    date: "2026-05-29",
+    avatarColor: "#3b82f6",
+  },
+  {
+    id: 3,
+    name: "Ananya Reddy",
+    avatar: "AR",
+    role: "ML Engineer",
+    matchScore: 92,
+    status: "Interview",
+    date: "2026-05-28",
+    avatarColor: "#22c55e",
+  },
+  {
+    id: 4,
+    name: "Vikram Patel",
+    avatar: "VP",
+    role: "Backend Developer",
+    matchScore: 76,
+    status: "Applied",
+    date: "2026-05-28",
+    avatarColor: "#f59e0b",
+  },
+  {
+    id: 5,
+    name: "Sneha Gupta",
+    avatar: "SG",
+    role: "DevOps Engineer",
+    matchScore: 85,
+    status: "Shortlisted",
+    date: "2026-05-27",
+    avatarColor: "#ef4444",
+  },
+  {
+    id: 6,
+    name: "Arjun Nair",
+    avatar: "AN",
+    role: "Data Scientist",
+    matchScore: 91,
+    status: "AI Screening",
+    date: "2026-05-27",
+    avatarColor: "#0ea5e9",
+  },
+  {
+    id: 7,
+    name: "Meera Iyer",
+    avatar: "MI",
+    role: "UI/UX Designer",
+    matchScore: 83,
+    status: "Interview",
+    date: "2026-05-26",
+    avatarColor: "#d946ef",
+  },
+];
+
+// ─── Top Skills In Demand ───────────────────────────────────────────
+export const topSkills = [
+  { skill: "Python", demand: 92, openings: 12, color: "#3b82f6" },
+  { skill: "React", demand: 88, openings: 10, color: "#8b5cf6" },
+  { skill: "Java", demand: 85, openings: 9, color: "#22c55e" },
+  { skill: "SQL", demand: 82, openings: 8, color: "#f59e0b" },
+  { skill: "JavaScript", demand: 80, openings: 11, color: "#0ea5e9" },
+  { skill: "Machine Learning", demand: 78, openings: 6, color: "#ef4444" },
+];
+
+// ─── AI Hiring Insights ────────────────────────────────────────────
+export const aiInsights = {
+  bestCandidates: [
+    { name: "Priya Sharma", role: "Senior React Developer", score: 94 },
+    { name: "Ananya Reddy", role: "ML Engineer", score: 92 },
+    { name: "Arjun Nair", role: "Data Scientist", score: 91 },
+  ],
+  skillGaps: [
+    { skill: "Kubernetes", gap: 35, trend: "increasing" },
+    { skill: "Rust", gap: 28, trend: "increasing" },
+    { skill: "GraphQL", gap: 22, trend: "stable" },
+    { skill: "System Design", gap: 18, trend: "decreasing" },
+  ],
+  recommendations: [
+    "Increase sourcing from college portals for ML roles — 40% higher quality candidates",
+    "Schedule interviews within 48 hours to improve offer acceptance by 25%",
+    "Consider remote positions for DevOps roles — 3x larger talent pool",
+    "Add Python assessment to screening pipeline — reduces false positives by 30%",
+  ],
+};
+
+// ─── Candidate Dashboard Data ───────────────────────────────────────
+export const candidateStats = [
+  {
+    id: "resume-score",
+    label: "Resume Score",
+    value: 82,
+    suffix: "/100",
+    icon: "FileText",
+    gradient: "gradient-card-blue",
+    color: "#3b82f6",
+    change: "+5",
+    changeType: "positive" as const,
+  },
+  {
+    id: "jobs-applied",
+    label: "Jobs Applied",
+    value: 14,
+    icon: "Send",
+    gradient: "gradient-card-purple",
+    color: "#8b5cf6",
+    change: "+3",
+    changeType: "positive" as const,
+  },
+  {
+    id: "shortlisted-jobs",
+    label: "Shortlisted",
+    value: 6,
+    icon: "CheckCircle",
+    gradient: "gradient-card-green",
+    color: "#22c55e",
+    change: "+2",
+    changeType: "positive" as const,
+  },
+
+  {
+    id: "profile-completion",
+    label: "Profile Complete",
+    value: 85,
+    suffix: "%",
+    icon: "User",
+    gradient: "gradient-card-blue",
+    color: "#0ea5e9",
+    change: "+10%",
+    changeType: "positive" as const,
+  },
+];
+
+export const candidateSkills = [
+  { skill: "React", level: 90, category: "Frontend" },
+  { skill: "TypeScript", level: 85, category: "Frontend" },
+  { skill: "Node.js", level: 80, category: "Backend" },
+  { skill: "Python", level: 75, category: "Backend" },
+  { skill: "SQL", level: 82, category: "Database" },
+  { skill: "Docker", level: 65, category: "DevOps" },
+];
+
+export const missingSkills = [
+  { skill: "Kubernetes", importance: "High", matchBoost: "+12%" },
+  { skill: "GraphQL", importance: "Medium", matchBoost: "+8%" },
+  { skill: "AWS", importance: "High", matchBoost: "+15%" },
+  { skill: "System Design", importance: "High", matchBoost: "+10%" },
+];
+
+export const recommendedJobs = [
+  {
+    id: 1,
+    title: "Senior Frontend Developer",
+    company: "TechCorp India",
+    location: "Bangalore",
+    salary: "₹25-35 LPA",
+    matchScore: 92,
+    posted: "2 days ago",
+    logo: "TC",
+    logoColor: "#3b82f6",
+    type: "Full-time",
+    experience: "4-6 years",
+  },
+  {
+    id: 2,
+    title: "Full Stack Engineer",
+    company: "InnovateTech",
+    location: "Hyderabad",
+    salary: "₹20-30 LPA",
+    matchScore: 87,
+    posted: "3 days ago",
+    logo: "IT",
+    logoColor: "#8b5cf6",
+    type: "Full-time",
+    experience: "3-5 years",
+  },
+  {
+    id: 3,
+    title: "React Developer",
+    company: "StartupHub",
+    location: "Remote",
+    salary: "₹18-25 LPA",
+    matchScore: 85,
+    posted: "1 day ago",
+    logo: "SH",
+    logoColor: "#22c55e",
+    type: "Remote",
+    experience: "2-4 years",
+  },
+  {
+    id: 4,
+    title: "Lead Frontend Architect",
+    company: "MegaSoft",
+    location: "Pune",
+    salary: "₹35-50 LPA",
+    matchScore: 79,
+    posted: "5 days ago",
+    logo: "MS",
+    logoColor: "#f59e0b",
+    type: "Full-time",
+    experience: "6-8 years",
+  },
+];
+
+export const applicationTimeline = [
+  {
+    id: 1,
+    company: "TechCorp India",
+    role: "Senior Frontend Developer",
+    status: "Interview Scheduled",
+    statusColor: "#22c55e",
+    date: "Jun 5, 2026",
+    step: 4,
+    totalSteps: 5,
+  },
+  {
+    id: 2,
+    company: "InnovateTech",
+    role: "Full Stack Engineer",
+    status: "AI Screening",
+    statusColor: "#3b82f6",
+    date: "Jun 3, 2026",
+    step: 2,
+    totalSteps: 5,
+  },
+  {
+    id: 3,
+    company: "StartupHub",
+    role: "React Developer",
+    status: "Under Review",
+    statusColor: "#f59e0b",
+    date: "Jun 1, 2026",
+    step: 3,
+    totalSteps: 5,
+  },
+  {
+    id: 4,
+    company: "MegaSoft",
+    role: "Lead Frontend Architect",
+    status: "Applied",
+    statusColor: "#94a3b8",
+    date: "May 28, 2026",
+    step: 1,
+    totalSteps: 5,
+  },
+];
+
+export const resumeMatchData = [
+  { category: "Technical Skills", score: 88 },
+  { category: "Experience", score: 75 },
+  { category: "Education", score: 90 },
+  { category: "Projects", score: 82 },
+  { category: "Certifications", score: 60 },
+  { category: "Soft Skills", score: 85 },
+];
+
+// ─── Candidate Resume Analysis Data ─────────────────────────────────
+export const resumeAnalysis = {
+  overallScore: 82,
+  atsScore: 78,
+  extractedSkills: [
+    { name: "React", proficiency: "Expert", color: "#3b82f6" },
+    { name: "TypeScript", proficiency: "Advanced", color: "#8b5cf6" },
+    { name: "Node.js", proficiency: "Advanced", color: "#22c55e" },
+    { name: "Python", proficiency: "Intermediate", color: "#f59e0b" },
+    { name: "SQL", proficiency: "Advanced", color: "#0ea5e9" },
+    { name: "Docker", proficiency: "Intermediate", color: "#ef4444" },
+    { name: "Git", proficiency: "Expert", color: "#64748b" },
+    { name: "REST APIs", proficiency: "Expert", color: "#d946ef" },
+  ],
+  improvements: [
+    {
+      title: "Add quantifiable achievements",
+      desc: "Include metrics like '40% performance improvement' in your experience section",
+      impact: "High",
+    },
+    {
+      title: "Include cloud certifications",
+      desc: "AWS or GCP certifications would boost your profile by 15%",
+      impact: "High",
+    },
+    {
+      title: "Add more project descriptions",
+      desc: "Detailed project descriptions with tech stack improve AI scoring",
+      impact: "Medium",
+    },
+    {
+      title: "Optimize keywords",
+      desc: "Include role-specific keywords that match job descriptions",
+      impact: "Medium",
+    },
+  ],
+  aiFeedback:
+    "Your resume demonstrates strong frontend expertise with React and TypeScript. To improve your match score, consider adding cloud platform experience (AWS/GCP), quantifiable achievements in your work history, and Kubernetes expertise which is increasingly demanded in the market.",
+};
+
+// ─── Candidate Application Activity ─────────────────────────────────
+export const applicationActivityData = [
+  { week: "Week 1", applied: 2, views: 15, responses: 1 },
+  { week: "Week 2", applied: 3, views: 22, responses: 2 },
+  { week: "Week 3", applied: 1, views: 18, responses: 1 },
+  { week: "Week 4", applied: 4, views: 30, responses: 3 },
+  { week: "Week 5", applied: 2, views: 25, responses: 2 },
+  { week: "Week 6", applied: 3, views: 28, responses: 2 },
+];
+
+// ─── Candidate Upcoming Interviews ──────────────────────────────────
+export const upcomingInterviews = [
+  {
+    id: 1,
+    company: "TechCorp India",
+    role: "Senior Frontend Developer",
+    date: "Jun 5, 2026",
+    time: "10:00 AM IST",
+    type: "Technical Round",
+    platform: "Google Meet",
+    interviewer: "Rajesh Kumar",
+    logo: "TC",
+    logoColor: "#3b82f6",
+    meetLink: "https://meet.google.com/abc-defg-hij",
+  },
+  {
+    id: 2,
+    company: "StartupHub",
+    role: "React Developer",
+    date: "Jun 8, 2026",
+    time: "2:30 PM IST",
+    type: "HR Discussion",
+    platform: "Zoom",
+    interviewer: "Neha Singh",
+    logo: "SH",
+    logoColor: "#22c55e",
+    meetLink: "https://zoom.us/j/123456789",
+  },
+  {
+    id: 3,
+    company: "InnovateTech",
+    role: "Full Stack Engineer",
+    date: "Jun 12, 2026",
+    time: "11:00 AM IST",
+    type: "System Design",
+    platform: "Microsoft Teams",
+    interviewer: "Amit Verma",
+    logo: "IT",
+    logoColor: "#8b5cf6",
+    meetLink: "https://teams.microsoft.com/meet",
+  },
+];
+
+// ─── Candidate Notifications ────────────────────────────────────────
+export const candidateNotifications = [
+  {
+    id: 1,
+    type: "interview",
+    title: "Interview Scheduled",
+    message: "Your technical interview with TechCorp India is scheduled for Jun 5, 2026 at 10:00 AM",
+    time: "2 hours ago",
+    unread: true,
+    icon: "Calendar",
+    color: "#22c55e",
+  },
+  {
+    id: 2,
+    type: "shortlist",
+    title: "Shortlisted!",
+    message: "Congratulations! You've been shortlisted for Senior Frontend Developer at TechCorp India",
+    time: "5 hours ago",
+    unread: true,
+    icon: "Star",
+    color: "#f59e0b",
+  },
+  {
+    id: 3,
+    type: "screening",
+    title: "AI Screening Complete",
+    message: "Your resume has been screened for Full Stack Engineer at InnovateTech. Match Score: 87%",
+    time: "1 day ago",
+    unread: true,
+    icon: "Brain",
+    color: "#8b5cf6",
+  },
+  {
+    id: 4,
+    type: "update",
+    title: "Application Update",
+    message: "Your application for React Developer at StartupHub is under review",
+    time: "2 days ago",
+    unread: false,
+    icon: "FileText",
+    color: "#3b82f6",
+  },
+  {
+    id: 5,
+    type: "message",
+    title: "Recruiter Message",
+    message: "Hi Priya, we were impressed by your profile. Would you be available for a quick chat?",
+    time: "3 days ago",
+    unread: false,
+    icon: "MessageSquare",
+    color: "#0ea5e9",
+  },
+  {
+    id: 6,
+    type: "tip",
+    title: "Profile Tip",
+    message: "Add your AWS certification to improve your match score by 15% for cloud roles",
+    time: "4 days ago",
+    unread: false,
+    icon: "Lightbulb",
+    color: "#d946ef",
+  },
+];
+
+// ─── Resume Score History ───────────────────────────────────────────
+export const resumeScoreHistory = [
+  { date: "Jan", score: 58 },
+  { date: "Feb", score: 62 },
+  { date: "Mar", score: 65 },
+  { date: "Apr", score: 70 },
+  { date: "May", score: 76 },
+  { date: "Jun", score: 82 },
+];
+
+// ─── Applied Jobs Detailed ──────────────────────────────────────────
+export const appliedJobsDetailed = [
+  {
+    id: 1,
+    title: "Senior Frontend Developer",
+    company: "TechCorp India",
+    location: "Bangalore",
+    appliedDate: "May 20, 2026",
+    status: "Interview Scheduled",
+    statusColor: "#22c55e",
+    matchScore: 92,
+    logo: "TC",
+    logoColor: "#3b82f6",
+    salary: "₹25-35 LPA",
+  },
+  {
+    id: 2,
+    title: "Full Stack Engineer",
+    company: "InnovateTech",
+    location: "Hyderabad",
+    appliedDate: "May 22, 2026",
+    status: "AI Screening",
+    statusColor: "#3b82f6",
+    matchScore: 87,
+    logo: "IT",
+    logoColor: "#8b5cf6",
+    salary: "₹20-30 LPA",
+  },
+  {
+    id: 3,
+    title: "React Developer",
+    company: "StartupHub",
+    location: "Remote",
+    appliedDate: "May 25, 2026",
+    status: "Under Review",
+    statusColor: "#f59e0b",
+    matchScore: 85,
+    logo: "SH",
+    logoColor: "#22c55e",
+    salary: "₹18-25 LPA",
+  },
+  {
+    id: 4,
+    title: "Lead Frontend Architect",
+    company: "MegaSoft",
+    location: "Pune",
+    appliedDate: "May 28, 2026",
+    status: "Applied",
+    statusColor: "#94a3b8",
+    matchScore: 79,
+    logo: "MS",
+    logoColor: "#f59e0b",
+    salary: "₹35-50 LPA",
+  },
+  {
+    id: 5,
+    title: "UI Engineer",
+    company: "DigitalWave",
+    location: "Mumbai",
+    appliedDate: "May 15, 2026",
+    status: "Rejected",
+    statusColor: "#ef4444",
+    matchScore: 72,
+    logo: "DW",
+    logoColor: "#ef4444",
+    salary: "₹15-22 LPA",
+  },
+];
+
+// ─── Sidebar Navigation ────────────────────────────────────────────
+export const recruiterNav = [
+  { label: "Dashboard", icon: "LayoutDashboard", href: "/recruiter/dashboard" },
+  { label: "Jobs", icon: "Briefcase", href: "/recruiter/jobs" },
+  { label: "Applicants", icon: "Users", href: "/recruiter/applicants" },
+  { label: "AI Screening", icon: "Brain", href: "/recruiter/ai-screening" },
+  { label: "Shortlisted", icon: "Star", href: "/recruiter/shortlisted" },
+  { label: "Interviews", icon: "Video", href: "/recruiter/interviews" },
+  { label: "Analytics", icon: "BarChart3", href: "/recruiter/analytics" },
+  { label: "Reports", icon: "FileBarChart", href: "/recruiter/reports" },
+  { label: "Settings", icon: "Settings", href: "/recruiter/settings" },
+];
+
+export const candidateNav = [
+  { label: "Dashboard", icon: "LayoutDashboard", href: "/candidate/dashboard" },
+  { label: "My Profile", icon: "User", href: "/candidate/profile" },
+  { label: "Resume Analysis", icon: "FileText", href: "/candidate/resume" },
+  { label: "Recommended Jobs", icon: "Sparkles", href: "/candidate/recommended" },
+  { label: "Browse Jobs", icon: "Search", href: "/candidate/jobs" },
+  { label: "Applied Jobs", icon: "Send", href: "/candidate/applied" },
+];
