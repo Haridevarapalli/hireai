@@ -4,8 +4,9 @@ import logging
 from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User
@@ -51,8 +52,9 @@ def signup_view(request):
         full_name=data['full_name'],
         role=data['role'],
         phone=data.get('phone', ''),
-        is_verified=False,
+        is_verified=True,
     )
+
 
     otp_code = user.generate_otp()
     try:
@@ -161,3 +163,30 @@ def token_refresh_view(request):
     except Exception:
         return Response({'detail': 'Invalid or expired refresh token.'},
                         status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password_view(request):
+    """Change the authenticated user's password."""
+    current_password = request.data.get('current_password', '')
+    new_password = request.data.get('new_password', '')
+
+    if not current_password or not new_password:
+        return Response({'detail': 'Both current and new passwords are required.'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    if len(new_password) < 6:
+        return Response({'detail': 'New password must be at least 6 characters long.'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    user = request.user
+    if not user.check_password(current_password):
+        return Response({'detail': 'Current password is incorrect.'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    user.set_password(new_password)
+    user.save(update_fields=['password'])
+    return Response({'success': True, 'message': 'Password changed successfully.'},
+                    status=status.HTTP_200_OK)
+

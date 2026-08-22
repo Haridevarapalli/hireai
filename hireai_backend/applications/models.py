@@ -7,31 +7,35 @@ class Application(models.Model):
     """A candidate's application to a job."""
 
     STATUS_APPLIED = 'applied'
+    STATUS_AI_SCREENING = 'ai_screening'
+    STATUS_SHORTLISTED = 'shortlisted'
+    STATUS_INTERVIEW = 'interview'
+    STATUS_OFFER_SENT = 'offer_sent'
+    STATUS_OFFER_SIGNED = 'offer_signed'
+    STATUS_OFFER_ACCEPTED = 'offer_accepted'
+    STATUS_REJECTED = 'rejected'
     STATUS_HR_PENDING = 'hr_pending'
     STATUS_HR_PASSED = 'hr_passed'
     STATUS_HR_FAILED = 'hr_failed'
     STATUS_TECH_PENDING = 'tech_pending'
     STATUS_TECH_PASSED = 'tech_passed'
     STATUS_TECH_FAILED = 'tech_failed'
-    STATUS_OFFER_SENT = 'offer_sent'
-    STATUS_OFFER_SIGNED = 'offer_signed'
-    STATUS_OFFER_ACCEPTED = 'offer_accepted'
-    STATUS_SHORTLISTED = 'shortlisted'
-    STATUS_REJECTED = 'rejected'
 
     STATUS_CHOICES = [
         (STATUS_APPLIED, 'Applied'),
+        (STATUS_AI_SCREENING, 'AI Screening'),
+        (STATUS_SHORTLISTED, 'Shortlisted'),
+        (STATUS_INTERVIEW, 'Interview'),
+        (STATUS_OFFER_SENT, 'Offer Sent'),
+        (STATUS_OFFER_SIGNED, 'Offer Signed'),
+        (STATUS_OFFER_ACCEPTED, 'Offer Accepted'),
+        (STATUS_REJECTED, 'Rejected'),
         (STATUS_HR_PENDING, 'HR Pending'),
         (STATUS_HR_PASSED, 'HR Passed'),
         (STATUS_HR_FAILED, 'HR Failed'),
         (STATUS_TECH_PENDING, 'Tech Pending'),
         (STATUS_TECH_PASSED, 'Tech Passed'),
         (STATUS_TECH_FAILED, 'Tech Failed'),
-        (STATUS_OFFER_SENT, 'Offer Sent'),
-        (STATUS_OFFER_SIGNED, 'Offer Signed'),
-        (STATUS_OFFER_ACCEPTED, 'Offer Accepted'),
-        (STATUS_SHORTLISTED, 'Shortlisted'),
-        (STATUS_REJECTED, 'Rejected'),
     ]
 
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applications')
@@ -172,3 +176,81 @@ class Offer(models.Model):
 
     def __str__(self):
         return f'Offer for {self.application} ({self.status})'
+
+
+class ApplicationStatusHistory(models.Model):
+    """Tracks chronological status transitions for each application."""
+
+    application = models.ForeignKey(
+        Application,
+        on_delete=models.CASCADE,
+        related_name='status_history',
+    )
+    from_status = models.CharField(max_length=30, blank=True, default='')
+    to_status = models.CharField(max_length=30)
+    changed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='status_changes_made',
+    )
+    note = models.TextField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'applications_status_history'
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f'App #{self.application.id}: {self.from_status} -> {self.to_status}'
+
+
+class Interview(models.Model):
+    """A scheduled interview between recruiter and candidate."""
+
+    STATUS_SCHEDULED = 'scheduled'
+    STATUS_COMPLETED = 'completed'
+    STATUS_CANCELLED = 'cancelled'
+    STATUS_CHOICES = [
+        (STATUS_SCHEDULED, 'Scheduled'),
+        (STATUS_COMPLETED, 'Completed'),
+        (STATUS_CANCELLED, 'Cancelled'),
+    ]
+
+    application = models.ForeignKey(
+        Application,
+        on_delete=models.CASCADE,
+        related_name='interviews',
+    )
+    candidate = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='candidate_interviews',
+    )
+    recruiter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='scheduled_interviews',
+    )
+    job = models.ForeignKey(
+        Job,
+        on_delete=models.CASCADE,
+        related_name='interviews',
+    )
+    title = models.CharField(max_length=255, default='Technical & HR Interview')
+    scheduled_at = models.DateTimeField()
+    duration_minutes = models.IntegerField(default=45)
+    meeting_link = models.CharField(max_length=500, default='https://meet.google.com/smarthire-ai-interview')
+    interview_type = models.CharField(max_length=50, default='HR & Technical')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_SCHEDULED)
+    notes = models.TextField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'applications_interview'
+        ordering = ['scheduled_at']
+
+    def __str__(self):
+        return f'Interview with {self.candidate.email} for {self.job.title}'
+

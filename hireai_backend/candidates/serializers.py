@@ -18,8 +18,15 @@ class CandidateProfileResponseSerializer(serializers.Serializer):
 class CandidateProfileUpdateSerializer(serializers.Serializer):
     full_name = serializers.CharField(required=False, allow_blank=True)
     phone = serializers.CharField(required=False, allow_blank=True)
+    bio = serializers.CharField(required=False, allow_blank=True)
+    location = serializers.CharField(required=False, allow_blank=True)
     tech_stacks = serializers.ListField(child=serializers.CharField(), required=False)
+    job_preferences = serializers.DictField(required=False)
+    ai_settings = serializers.DictField(required=False)
+    notification_settings = serializers.DictField(required=False)
+    resume_visibility = serializers.CharField(required=False, allow_blank=True)
     parsed_resume_json = serializers.DictField(required=False, allow_null=True)
+
 
 
 class ResumeUploadResponseSerializer(serializers.Serializer):

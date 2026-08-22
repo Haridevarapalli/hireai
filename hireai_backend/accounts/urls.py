@@ -7,4 +7,6 @@ urlpatterns = [
     path('resend-otp', views.resend_otp_view),
     path('login', views.login_view),
     path('token/refresh', views.token_refresh_view),
+    path('change-password', views.change_password_view),
 ]
+

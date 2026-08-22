@@ -12,7 +12,13 @@ class CandidateProfile(models.Model):
         related_name='candidate_profile',
     )
     phone = models.CharField(max_length=30, blank=True, default='')
+    bio = models.TextField(blank=True, default='')
+    location = models.CharField(max_length=255, blank=True, default='Bangalore, India')
     tech_stacks = models.JSONField(default=list, blank=True)
+    job_preferences = models.JSONField(default=dict, blank=True)
+    ai_settings = models.JSONField(default=dict, blank=True)
+    notification_settings = models.JSONField(default=dict, blank=True)
+    resume_visibility = models.CharField(max_length=30, default='recruiter_only')
     resume_file = models.FileField(upload_to='resumes/', blank=True, null=True)
     resume_id = models.CharField(max_length=100, blank=True, default='')
     resume_hash = models.CharField(max_length=128, blank=True, default='')
@@ -25,3 +31,4 @@ class CandidateProfile(models.Model):
 
     def __str__(self):
         return f'CandidateProfile({self.user.email})'
+

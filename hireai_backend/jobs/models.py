@@ -48,3 +48,28 @@ class Job(models.Model):
 
     def __str__(self):
         return f'{self.title} @ {self.company}'
+
+
+class SavedJob(models.Model):
+    """A candidate's saved / bookmarked job listing."""
+
+    candidate = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='saved_jobs',
+    )
+    job = models.ForeignKey(
+        Job,
+        on_delete=models.CASCADE,
+        related_name='saved_by_candidates',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'jobs_saved_job'
+        unique_together = [('candidate', 'job')]
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.candidate.email} saved {self.job.title}'
+

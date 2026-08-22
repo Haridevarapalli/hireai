@@ -10,4 +10,6 @@ urlpatterns = [
     path('resume/parse-cancel', views.resume_parse_cancel_view),
     path('resume/parse-retry', views.resume_parse_retry_view),
     path('resume/remove', views.resume_remove_view),
+    path('interviews', views.candidate_interviews_view),
 ]
+

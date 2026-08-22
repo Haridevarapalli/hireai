@@ -32,8 +32,14 @@ def _profile_response(user, profile):
         'full_name': user.full_name,
         'email': user.email,
         'phone': profile.phone or user.phone,
+        'bio': profile.bio or '',
+        'location': profile.location or 'Bangalore, India',
         'role': user.role,
         'tech_stacks': profile.tech_stacks or [],
+        'job_preferences': profile.job_preferences or {},
+        'ai_settings': profile.ai_settings or {},
+        'notification_settings': profile.notification_settings or {},
+        'resume_visibility': profile.resume_visibility or 'recruiter_only',
         'resume_file_url': resume_url,
         'resume_id': profile.resume_id,
         'resume_hash': profile.resume_hash,
@@ -66,14 +72,55 @@ def candidate_profile_view(request):
         user.save(update_fields=['full_name'])
     if 'phone' in data:
         profile.phone = data['phone']
+    if 'bio' in data:
+        profile.bio = data['bio']
+    if 'location' in data:
+        profile.location = data['location']
     if 'tech_stacks' in data:
         profile.tech_stacks = data['tech_stacks']
+    if 'job_preferences' in data:
+        profile.job_preferences = data['job_preferences']
+    if 'ai_settings' in data:
+        profile.ai_settings = data['ai_settings']
+    if 'notification_settings' in data:
+        profile.notification_settings = data['notification_settings']
+    if 'resume_visibility' in data:
+        profile.resume_visibility = data['resume_visibility']
     if 'parsed_resume_json' in data and data['parsed_resume_json'] is not None:
         profile.parsed_resume_json = data['parsed_resume_json']
         profile.parse_status = 'completed'
     profile.save()
 
     return Response(_profile_response(user, profile))
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def candidate_interviews_view(request):
+    """List scheduled interviews for the current candidate."""
+    from applications.models import Interview
+    user = request.user
+    interviews = Interview.objects.filter(candidate=user).select_related('job', 'recruiter').order_by('scheduled_at')
+    data = [
+        {
+            'id': it.id,
+            'application_id': it.application_id,
+            'job_id': it.job_id,
+            'job_title': it.job.title,
+            'company': it.job.company,
+            'recruiter_name': it.recruiter.full_name or 'Hiring Manager',
+            'title': it.title,
+            'scheduled_at': it.scheduled_at.isoformat(),
+            'duration_minutes': it.duration_minutes,
+            'meeting_link': it.meeting_link,
+            'interview_type': it.interview_type,
+            'status': it.status,
+            'notes': it.notes,
+        }
+        for it in interviews
+    ]
+    return Response(data)
+
 
 
 @api_view(['POST'])

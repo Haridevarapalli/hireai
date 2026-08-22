@@ -9,18 +9,66 @@ class ApplicationDtoSerializer(serializers.ModelSerializer):
     candidate_name = serializers.CharField(source='candidate.full_name', read_only=True)
     candidate_email = serializers.CharField(source='candidate.email', read_only=True)
     candidate_id = serializers.IntegerField(source='candidate.id', read_only=True)
+    candidate_phone = serializers.CharField(source='candidate.phone', read_only=True)
     last_updated = serializers.DateTimeField(source='updated_at', read_only=True)
+    skills = serializers.SerializerMethodField()
+    resume_file_url = serializers.SerializerMethodField()
+    ats_score = serializers.SerializerMethodField()
+    match_score = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
         fields = [
             'id', 'job', 'candidate_id', 'job_title', 'company',
-            'candidate_name', 'candidate_email', 'match_score',
+            'candidate_name', 'candidate_email', 'candidate_phone', 'match_score',
             'hr_score', 'tech_score', 'status', 'location',
             'applied_at', 'last_updated', 'next_action',
             'retry_eligible_at', 'updated_at', 'tech_language',
-            'last_failure_reason',
+            'last_failure_reason', 'skills', 'resume_file_url', 'ats_score',
         ]
+
+    def get_match_score(self, obj):
+        try:
+            raw_skills = []
+            profile = obj.candidate.candidate_profile
+            if profile.tech_stacks:
+                raw_skills.extend(profile.tech_stacks)
+            parsed = profile.parsed_resume_json or {}
+            if 'skills' in parsed and isinstance(parsed['skills'], list):
+                raw_skills.extend(parsed['skills'])
+            from jobs.views import _normalize_skills, _match_skills
+            candidate_skills = _normalize_skills(raw_skills)
+            req_skills = obj.job.required_skills or []
+            score, _, _ = _match_skills(candidate_skills, req_skills)
+            return score
+        except Exception:
+            return obj.match_score or 0
+
+    def get_skills(self, obj):
+        try:
+            profile = obj.candidate.candidate_profile
+            return profile.tech_stacks or profile.parsed_resume_json.get('skills', [])
+        except Exception:
+            return []
+
+    def get_resume_file_url(self, obj):
+        try:
+            profile = obj.candidate.candidate_profile
+            if profile.resume_file:
+                return profile.resume_file.url
+        except Exception:
+            pass
+        return None
+
+    def get_ats_score(self, obj):
+        try:
+            profile = obj.candidate.candidate_profile
+            parsed = profile.parsed_resume_json or {}
+            if 'overallScore' in parsed:
+                return parsed['overallScore']
+        except Exception:
+            pass
+        return obj.match_score or 0
 
 
 class ApplicationTimelineSerializer(serializers.Serializer):

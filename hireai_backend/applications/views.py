@@ -58,7 +58,45 @@ def apply_view(request):
     )
     application.compute_next_action()
 
+    # Record status history
+    try:
+        from .models import ApplicationStatusHistory
+        ApplicationStatusHistory.objects.create(
+            application=application,
+            from_status='',
+            to_status=Application.STATUS_APPLIED,
+            changed_by=user,
+            note=f'Applied to {job.title} at {job.company}',
+        )
+    except Exception as e:
+        pass
+
+    # Create in-app notifications
+    try:
+        from notifications.models import Notification
+        # Candidate notification
+        Notification.objects.create(
+            user=user,
+            type='application',
+            title='Application Submitted',
+            body=f'You have successfully applied for {job.title} at {job.company}.',
+            payload={'application_id': application.id, 'job_id': job.id},
+        )
+        # Recruiter notification
+        if job.created_by:
+            candidate_name = user.full_name or user.username or 'Candidate'
+            Notification.objects.create(
+                user=job.created_by,
+                type='new_application',
+                title='New Candidate Application 📥',
+                body=f'{candidate_name} applied for {job.title}',
+                payload={'application_id': application.id, 'job_id': job.id, 'candidate_name': candidate_name, 'route': '/recruiter/applicants'},
+            )
+    except Exception as e:
+        pass
+
     return Response(ApplicationDtoSerializer(application).data, status=status.HTTP_201_CREATED)
+
 
 
 @api_view(['GET'])
@@ -473,25 +511,24 @@ def _get_candidate_app(user, application_id):
 
 
 def _compute_match_score(user, job):
-    """Compute match score between candidate and job."""
-    candidate_skills = set()
+    """Compute match score between candidate and job using the authoritative skill matching engine."""
+    from jobs.views import _normalize_skills, _match_skills
+    raw_skills = []
     try:
         profile = user.candidate_profile
         if profile.tech_stacks:
-            candidate_skills.update(s.lower().strip() for s in profile.tech_stacks)
+            raw_skills.extend(profile.tech_stacks)
         parsed = profile.parsed_resume_json or {}
         if 'skills' in parsed and isinstance(parsed['skills'], list):
-            candidate_skills.update(s.lower().strip() for s in parsed['skills'])
+            raw_skills.extend(parsed['skills'])
     except CandidateProfile.DoesNotExist:
         pass
 
-    required = [s.lower().strip() for s in (job.required_skills or [])]
-    if not required:
-        return 80
+    candidate_skills = _normalize_skills(raw_skills)
+    required_skills = job.required_skills or []
+    score, matched, missing = _match_skills(candidate_skills, required_skills)
+    return score
 
-    matched = [s for s in required if s in candidate_skills]
-    score = int((len(matched) / len(required)) * 100)
-    return max(25, min(100, score))
 
 
 def _create_assessment_session(app, stage, language):

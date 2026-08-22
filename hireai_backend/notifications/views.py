@@ -28,6 +28,40 @@ def my_notifications_view(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+def mark_notification_read_view(request, notification_id):
+    """Mark a single notification as read."""
+    try:
+        notif = Notification.objects.get(id=notification_id, user=request.user)
+        notif.read = True
+        notif.save(update_fields=['read'])
+        return Response({'success': True})
+    except Notification.DoesNotExist:
+        return Response({'detail': 'Notification not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def mark_all_read_view(request):
+    """Mark all notifications of the current user as read."""
+    Notification.objects.filter(user=request.user, read=False).update(read=True)
+    return Response({'success': True, 'message': 'All notifications marked as read.'})
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_notification_view(request, notification_id):
+    """Delete a single notification."""
+    try:
+        notif = Notification.objects.get(id=notification_id, user=request.user)
+        notif.delete()
+        return Response({'success': True})
+    except Notification.DoesNotExist:
+        return Response({'detail': 'Notification not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def register_device_view(request):
     """Register a device push token."""
     token = request.data.get('token', '')
