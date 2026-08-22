@@ -65,14 +65,14 @@ export default function TrackerPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl border border-slate-100 p-6 overflow-x-auto"
+        className="bg-white rounded-2xl border border-slate-100 p-4 sm:p-6"
         style={{ boxShadow: "0 1px 3px 0 rgba(0,0,0,0.04)" }}
       >
         <h3 className="text-sm font-semibold text-slate-700 mb-5 flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-blue-500" />
           Hiring Pipeline Stages
         </h3>
-        <div className="flex items-center gap-2 min-w-[600px]">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:items-center gap-2 sm:gap-3">
           {stages.map((stage, i) => (
             <React.Fragment key={stage}>
               <div className="flex-1 text-center">
@@ -98,7 +98,7 @@ export default function TrackerPage() {
                 </p>
               </div>
               {i < stages.length - 1 && (
-                <ArrowRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
+                <ArrowRight className="w-4 h-4 text-slate-300 flex-shrink-0 hidden md:block" />
               )}
             </React.Fragment>
           ))}

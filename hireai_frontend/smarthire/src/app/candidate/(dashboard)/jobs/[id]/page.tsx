@@ -83,7 +83,7 @@ export default async function JobDetailsPage({
             </div>
           </div>
 
-          <div className="flex flex-col items-center md:items-end gap-3 min-w-[180px]">
+          <div className="flex flex-col items-center md:items-end gap-3 w-full md:w-auto">
             <div className="px-4 py-2 bg-emerald-50/80 rounded-xl border border-emerald-200 w-full text-center">
               <span className="text-emerald-700 font-bold text-base flex items-center justify-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-emerald-500" />

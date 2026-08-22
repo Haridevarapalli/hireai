@@ -104,7 +104,7 @@ export default function AppliedJobsPage() {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
         {[
           { label: "Total Applied", value: totalApplied, color: "#3b82f6" },
           { label: "Shortlisted", value: shortlistedCount, color: "#f59e0b" },

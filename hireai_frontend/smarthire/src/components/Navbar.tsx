@@ -82,7 +82,10 @@ export default function Navbar({ userName, userRole, avatarInitials }: NavbarPro
 
   return (
     <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-200/60">
-      <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-between h-16 px-3 sm:px-6 lg:px-8">
+        {/* Mobile Spacing for Hamburger Menu */}
+        <div className="lg:hidden w-10 flex-shrink-0" />
+
         {/* Welcome Message & Search */}
         <div className="flex items-center gap-6 flex-1">
           <div className="hidden md:block">

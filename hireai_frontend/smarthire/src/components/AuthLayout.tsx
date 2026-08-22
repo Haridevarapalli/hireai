@@ -231,7 +231,7 @@ export default function AuthLayout({ children, role }: AuthLayoutProps) {
         </div>
 
         {/* Footer */}
-        <div className="absolute bottom-6 left-0 right-0 text-center">
+        <div className="mt-8 text-center">
           <p className="text-[11px] text-slate-400">
             © 2026 SmartHire AI ·{" "}
             <a href="#" className="hover:text-slate-600">Privacy</a> ·{" "}

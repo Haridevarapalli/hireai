@@ -218,16 +218,16 @@ export default function BrowseJobsPage() {
                   className="bg-white rounded-2xl border border-slate-100 p-5 hover:border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer group"
                   style={{ boxShadow: "0 1px 3px 0 rgba(0,0,0,0.04)" }}
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md"
+                        className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md flex-shrink-0"
                         style={{ backgroundColor: logoColor }}
                       >
                         {firstLetter}
                       </div>
-                      <div>
-                        <h3 className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors truncate">
                           {job.title}
                         </h3>
                         <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">

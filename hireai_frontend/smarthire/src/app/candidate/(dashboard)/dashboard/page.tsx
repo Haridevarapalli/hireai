@@ -289,7 +289,7 @@ export default function CandidateDashboard() {
           ) : (
             <>
               {/* Score Cards Row */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="p-3 rounded-xl bg-blue-50/50 border border-blue-100/50 text-center">
                   <p className="text-2xl font-bold text-blue-600">{matchResult.percentage}%</p>
                   <p className="text-[10px] text-slate-400 font-medium mt-0.5">Role Match</p>
