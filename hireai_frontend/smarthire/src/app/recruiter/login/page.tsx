@@ -39,6 +39,7 @@ export default function RecruiterLoginPage() {
     e.preventDefault();
     if (!validate()) return;
     setIsLoading(true);
+    setErrors({});
     
     const formData = new FormData();
     formData.append("email", email);
@@ -47,7 +48,7 @@ export default function RecruiterLoginPage() {
     const result = await login(formData, "recruiter");
     
     if (result?.error) {
-      setErrors({ email: result.error });
+      setErrors({ general: result.error });
       setIsLoading(false);
     }
   };
@@ -58,7 +59,7 @@ export default function RecruiterLoginPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-8"
+        className="text-center mb-6"
       >
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/20">
           <Briefcase className="w-7 h-7 text-white" />
@@ -67,9 +68,21 @@ export default function RecruiterLoginPage() {
           Welcome back, Recruiter!
         </h2>
         <p className="text-sm text-slate-500">
-          Sign in to manage your hiring pipeline
+          Sign in to manage your corporate hiring pipeline
         </p>
       </motion.div>
+
+      {/* Error Alert */}
+      {errors.general && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium flex items-start gap-2"
+        >
+          <span className="text-red-500 font-bold">●</span>
+          <span>{errors.general}</span>
+        </motion.div>
+      )}
 
       {/* Form */}
       <motion.form
@@ -89,7 +102,7 @@ export default function RecruiterLoginPage() {
             <input
               type="email"
               value={email}
-              onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: "" })); }}
+              onChange={(e) => { setEmail(e.target.value); setErrors({}); }}
               placeholder="recruiter@company.com"
               className={`w-full h-12 pl-11 pr-4 text-sm bg-slate-50 border rounded-xl
                 focus:outline-none focus:bg-white focus:border-purple-400 focus:ring-4 focus:ring-purple-500/10

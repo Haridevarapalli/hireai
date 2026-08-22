@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         CircularProgressIndicator loading = findViewById(R.id.login_loading_inline);
         AuthRepository authRepository = new AuthRepository(this);
 
-        TabLayout.Tab candidateTab = roleTabs.getTabAt(1);
+        TabLayout.Tab candidateTab = roleTabs.getTabAt(0);
         if (candidateTab != null) {
             candidateTab.select();
             isCandidateSelected = true;
@@ -43,18 +43,14 @@ public class LoginActivity extends AppCompatActivity {
         roleTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                isCandidateSelected = tab != null && tab.getPosition() == 1;
+                isCandidateSelected = tab != null && tab.getPosition() == 0;
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                // no-op
-            }
+            public void onTabUnselected(TabLayout.Tab tab) { }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                // no-op
-            }
+            public void onTabReselected(TabLayout.Tab tab) { }
         });
 
         signupHint.setOnClickListener(v -> startActivity(new Intent(this, SignupActivity.class)));
@@ -63,11 +59,11 @@ public class LoginActivity extends AppCompatActivity {
             String email = emailInput.getText().toString().trim();
             String password = passwordInput.getText().toString();
             if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-                Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show();
                 return;
             }
             loginButton.setEnabled(false);
-            loginButton.setText("Signing in...");
+            loginButton.setText("Logging in...");
             loading.setVisibility(android.view.View.VISIBLE);
             loadingStartedAt = System.currentTimeMillis();
             emailInput.setEnabled(false);
@@ -81,27 +77,30 @@ public class LoginActivity extends AppCompatActivity {
                     long delay = Math.max(0L, 350L - elapsed);
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         loginButton.setEnabled(true);
-                        loginButton.setText("Login");
+                        loginButton.setText("Log In");
                         loading.setVisibility(android.view.View.GONE);
                         emailInput.setEnabled(true);
                         passwordInput.setEnabled(true);
                         roleTabs.setEnabled(true);
                         signupHint.setEnabled(true);
+
                         String actualRole = response.user != null ? response.user.role : null;
                         String expectedRole = isCandidateSelected ? "CANDIDATE" : "RECRUITER";
-                        if (actualRole != null && !expectedRole.equals(actualRole)) {
+                        if (actualRole != null && !expectedRole.equalsIgnoreCase(actualRole)) {
                             authRepository.logout();
-                            String roleLabel = "RECRUITER".equals(actualRole) ? "Recruiter" : "Candidate";
+                            String roleLabel = "RECRUITER".equalsIgnoreCase(actualRole) ? "Recruiter" : "Candidate";
                             Toast.makeText(LoginActivity.this,
-                                    "This account is a " + roleLabel + " account. Switch tab and login.",
+                                    "This account is a " + roleLabel + " account. Switch tab to log in.",
                                     Toast.LENGTH_LONG).show();
                             return;
                         }
-                        boolean candidate = actualRole != null ? "CANDIDATE".equals(actualRole) : isCandidateSelected;
+                        boolean isCandidate = actualRole != null ? "CANDIDATE".equalsIgnoreCase(actualRole) : isCandidateSelected;
                         CandidateStateStore candidateStateStore = new CandidateStateStore(LoginActivity.this);
                         candidateStateStore.clearCandidateSession();
-                        candidateStateStore.setLoggedIn(candidate);
-                        Intent intent = new Intent(LoginActivity.this, candidate ? CandidateActivity.class : RecruiterActivity.class);
+                        candidateStateStore.setLoggedIn(isCandidate);
+
+                        Intent intent = new Intent(LoginActivity.this, isCandidate ? CandidateActivity.class : RecruiterActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
                     }, delay);
@@ -113,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                     long delay = Math.max(0L, 250L - elapsed);
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         loginButton.setEnabled(true);
-                        loginButton.setText("Login");
+                        loginButton.setText("Log In");
                         loading.setVisibility(android.view.View.GONE);
                         emailInput.setEnabled(true);
                         passwordInput.setEnabled(true);

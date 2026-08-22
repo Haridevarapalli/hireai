@@ -1,16 +1,22 @@
 package com.simats.hireai;
 
-import android.os.Bundle;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.simats.hireai.network.ApiClient;
 import com.simats.hireai.network.ApiModels;
+import com.simats.hireai.network.TokenStore;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +36,8 @@ public class CandidateActivity extends AppCompatActivity {
     private int selectedTabId = R.id.nav_home;
     private CandidateStateStore stateStore;
     private BottomNavigationView bottomNav;
+    private DrawerLayout drawerLayout;
+    private NavigationView drawerNav;
     private boolean gateActive;
     private boolean entryResolved;
 
@@ -56,13 +64,74 @@ public class CandidateActivity extends AppCompatActivity {
             selectedTabId = getIntent().getIntExtra(EXTRA_START_TAB, R.id.nav_home);
         }
 
+        drawerLayout = findViewById(R.id.candidate_drawer_layout);
+        drawerNav = findViewById(R.id.candidate_drawer_nav);
+
+        ImageButton drawerBtn = findViewById(R.id.candidate_btn_drawer);
+        if (drawerBtn != null) {
+            drawerBtn.setOnClickListener(v -> {
+                if (drawerLayout != null) {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+        }
+
+        ImageButton notificationsBtn = findViewById(R.id.candidate_btn_notifications);
+        if (notificationsBtn != null) {
+            notificationsBtn.setOnClickListener(v -> pushFragment(new CandidateNotificationsFragment()));
+        }
+
+        setupDrawerNav();
         setupBottomNav();
         getSupportFragmentManager().addOnBackStackChangedListener(this::updateBottomNavVisibilityForCurrentScreen);
         resolveEntryWithServerProfile(savedInstanceState);
     }
 
+    private void setupDrawerNav() {
+        if (drawerNav == null) return;
+        drawerNav.setNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (drawerLayout != null) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            }
+            if (itemId == R.id.nav_logout) {
+                performLogout();
+                return true;
+            }
+            if (itemId == R.id.nav_home) {
+                navigateToRootTab(R.id.nav_home);
+            } else if (itemId == R.id.nav_profile) {
+                navigateToRootTab(R.id.nav_profile);
+            } else if (itemId == R.id.nav_jobs) {
+                navigateToRootTab(R.id.nav_jobs);
+            } else if (itemId == R.id.nav_applications) {
+                navigateToRootTab(R.id.nav_applications);
+            } else if (itemId == R.id.nav_resume_analysis) {
+                pushScreen(R.layout.fragment_resume_analysis);
+            } else if (itemId == R.id.nav_recommended_jobs) {
+                pushScreen(R.layout.fragment_candidate_recommended_jobs);
+            } else if (itemId == R.id.nav_settings) {
+                pushFragment(new CandidateSettingsFragment());
+            }
+            return true;
+        });
+    }
+
+    private void performLogout() {
+        TokenStore.getInstance(this).clear();
+        stateStore.clearCandidateSession();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     public void onBackPressed() {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
         if (gateActive) {
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getSupportFragmentManager().popBackStack();
@@ -143,7 +212,6 @@ public class CandidateActivity extends AppCompatActivity {
     public void navigateToRootTab(int tabId) {
         getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
         if (bottomNav != null && bottomNav.getSelectedItemId() != tabId) {
-            // Listener will call switchToTab().
             bottomNav.setSelectedItemId(tabId);
             return;
         }
@@ -195,7 +263,6 @@ public class CandidateActivity extends AppCompatActivity {
             tx.show(existing);
         }
         selectedTabId = tabId;
-        // Apply root tab switch synchronously so visibility checks run against the actual visible tab fragment.
         tx.commitNowAllowingStateLoss();
         updateBottomNavVisibilityForCurrentScreen();
     }
@@ -212,8 +279,6 @@ public class CandidateActivity extends AppCompatActivity {
         androidx.fragment.app.FragmentManager fm = getSupportFragmentManager();
         androidx.fragment.app.FragmentTransaction tx = fm.beginTransaction()
                 .replace(R.id.candidate_nav_host, gate, TAG_TECH_STACK_GATE);
-        // Profile fetch callback may return after onSaveInstanceState (rotation/background).
-        // Allow state loss here to prevent a fatal crash; entry will be resolved again on resume/recreate.
         if (fm.isStateSaved()) {
             tx.commitAllowingStateLoss();
         } else {
@@ -239,7 +304,10 @@ public class CandidateActivity extends AppCompatActivity {
 
     private void updateBottomNavVisibilityForCurrentScreen() {
         Fragment visible = getVisibleFragment();
-        if (visible instanceof HrPrepPreloaderFragment) {
+        if (visible instanceof HrPrepPreloaderFragment
+                || visible instanceof CandidateNotificationsFragment
+                || visible instanceof CandidateSettingsFragment
+                || visible instanceof CandidateSavedJobsFragment) {
             setBottomNavVisible(false);
             return;
         }
@@ -252,6 +320,7 @@ public class CandidateActivity extends AppCompatActivity {
 
     private void setupBottomNav() {
         bottomNav = findViewById(R.id.bottom_nav);
+        if (bottomNav == null) return;
         bottomNav.setItemHorizontalTranslationEnabled(false);
         bottomNav.setOnItemSelectedListener(item -> {
             if (gateActive) {
@@ -374,6 +443,7 @@ public class CandidateActivity extends AppCompatActivity {
         String fullName = profile.fullName == null ? "" : profile.fullName.trim();
         String email = profile.email == null ? "" : profile.email.trim();
         stateStore.setCandidateIdentity(fullName, email);
+        updateDrawerHeader(fullName, email);
 
         boolean hasTech = profile.techStacks != null && !profile.techStacks.isEmpty();
         stateStore.setTechStackComplete(hasTech);
@@ -395,5 +465,15 @@ public class CandidateActivity extends AppCompatActivity {
         boolean parsed = profile.parsedResumeJson != null && !profile.parsedResumeJson.isEmpty();
         stateStore.setParsedResume(hasResume && parsed);
         CandidateUserStateRepository.getInstance(this).notifyStateChanged();
+    }
+
+    private void updateDrawerHeader(String fullName, String email) {
+        if (drawerNav == null || drawerNav.getHeaderCount() == 0) return;
+        View header = drawerNav.getHeaderView(0);
+        if (header == null) return;
+        TextView nameTv = header.findViewById(R.id.drawer_candidate_name);
+        TextView emailTv = header.findViewById(R.id.drawer_candidate_email);
+        if (nameTv != null && !fullName.isEmpty()) nameTv.setText(fullName);
+        if (emailTv != null && !email.isEmpty()) emailTv.setText(email);
     }
 }

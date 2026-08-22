@@ -6,53 +6,81 @@ export const parseArray = (val: any) => {
   }
   return Array.isArray(val) ? val : [];
 };
-export function calculateATSScore(resume: any) {
-  if (!resume) return 0;
-  let score = 0;
 
-  // Base scoring on presence of fields
-  if (resume.extractedName) score += 10;
-  if (resume.extractedEmail) score += 10;
-  if (resume.extractedPhone) score += 10;
+const SKILL_ALIASES: Record<string, string[]> = {
+  'js': ['javascript'],
+  'javascript': ['js'],
+  'ts': ['typescript'],
+  'typescript': ['ts'],
+  'reactjs': ['react'],
+  'react.js': ['react'],
+  'react': ['reactjs', 'react.js'],
+  'nodejs': ['node.js'],
+  'node': ['node.js', 'nodejs'],
+  'node.js': ['node', 'nodejs'],
+  'nextjs': ['next.js'],
+  'next': ['next.js', 'nextjs'],
+  'next.js': ['next', 'nextjs'],
+  'mysql': ['sql'],
+  'postgresql': ['sql', 'postgres'],
+  'postgres': ['sql', 'postgresql'],
+  'oracle': ['sql'],
+  'plsql': ['sql', 'pl/sql'],
+  'pl/sql': ['sql', 'plsql'],
+  'spring': ['spring boot', 'springboot'],
+  'springboot': ['spring boot', 'spring'],
+  'spring boot': ['spring', 'springboot'],
+  'rest api': ['rest apis', 'restful apis', 'restful api'],
+  'rest apis': ['rest api', 'restful apis', 'restful api'],
+  'aws': ['amazon web services'],
+};
 
-  try {
-    const education = parseArray(resume.education);
-    if (education.length > 0) score += 20;
-  } catch (e) {}
-
-  try {
-    const skills = parseArray(resume.skills);
-    if (skills.length > 0) score += 20;
-    if (skills.length > 5) score += 5; // Bonus for many skills
-  } catch (e) {}
-
-  try {
-    const projects = parseArray(resume.projects);
-    if (projects.length > 0) score += 15;
-    if (projects.length > 1) score += 5; // Bonus for multiple projects
-  } catch (e) {}
-
-  try {
-    const certs = parseArray(resume.certifications);
-    if (certs.length > 0) score += 5;
-  } catch (e) {}
-
-  return Math.min(score, 100);
+export function normalizeCandidateSkills(skills: string[]): Set<string> {
+  const set = new Set<string>();
+  for (const s of skills) {
+    if (!s || typeof s !== 'string') continue;
+    const clean = s.toLowerCase().trim();
+    if (!clean) continue;
+    set.add(clean);
+    if (SKILL_ALIASES[clean]) {
+      SKILL_ALIASES[clean].forEach(a => set.add(a.toLowerCase().trim()));
+    }
+  }
+  return set;
 }
 
-export function calculateMatchScore(resumeSkillsStr: string | null, targetRoleSkills: string[]) {
-  if (!resumeSkillsStr) return { percentage: 0, matched: [], missing: targetRoleSkills };
+export function isRequirementMatched(candidateSkillsSet: Set<string>, reqSkill: string): boolean {
+  if (!reqSkill || typeof reqSkill !== 'string') return false;
+  const cleanReq = reqSkill.toLowerCase().trim();
+  if (candidateSkillsSet.has(cleanReq)) return true;
+  if (SKILL_ALIASES[cleanReq]) {
+    return SKILL_ALIASES[cleanReq].some(a => candidateSkillsSet.has(a.toLowerCase().trim()));
+  }
+  return false;
+}
+
+export function calculateATSScore(resume: any): number {
+  if (!resume) return 0;
+  if (resume.overallScore != null) return Number(resume.overallScore);
+  return 0;
+}
+
+export function calculateMatchScore(resumeSkillsStr: string | null | any[], targetRoleSkills: string[]) {
+  if (!resumeSkillsStr || !targetRoleSkills || targetRoleSkills.length === 0) {
+    return { percentage: 0, matched: [], missing: targetRoleSkills || [] };
+  }
   
   let resumeSkills: string[] = [];
   try {
-    resumeSkills = parseArray(resumeSkillsStr).map((s: string) => s.toLowerCase());
+    resumeSkills = parseArray(resumeSkillsStr);
   } catch (e) {
     return { percentage: 0, matched: [], missing: targetRoleSkills };
   }
 
-  const matched = targetRoleSkills.filter(skill => resumeSkills.includes(skill.toLowerCase()));
-  const missing = targetRoleSkills.filter(skill => !resumeSkills.includes(skill.toLowerCase()));
-  const percentage = Math.round((matched.length / targetRoleSkills.length) * 100) || 0;
+  const candSet = normalizeCandidateSkills(resumeSkills);
+  const matched = targetRoleSkills.filter(req => isRequirementMatched(candSet, req));
+  const missing = targetRoleSkills.filter(req => !isRequirementMatched(candSet, req));
+  const percentage = targetRoleSkills.length > 0 ? Math.round((matched.length / targetRoleSkills.length) * 100) : 0;
 
   return { percentage, matched, missing };
 }

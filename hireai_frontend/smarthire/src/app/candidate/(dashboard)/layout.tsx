@@ -2,7 +2,7 @@ import React from "react";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import { candidateNav } from "@/lib/data";
-import { getUserSession } from "@/actions/authActions";
+import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function CandidateLayout({
@@ -10,7 +10,7 @@ export default async function CandidateLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getUserSession();
+  const session = await getSession();
   
   if (!session || session.role !== "candidate") {
     redirect("/candidate/login");

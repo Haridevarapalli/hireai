@@ -9,6 +9,8 @@ export interface SessionPayload {
   name: string;
   email: string;
   role: 'candidate' | 'recruiter';
+  token?: string;
+  refreshToken?: string;
 }
 
 export async function encrypt(payload: SessionPayload) {

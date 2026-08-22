@@ -177,7 +177,14 @@ export default function Sidebar({ navItems, userType }: SidebarProps) {
             {!collapsed && <span className="text-sm font-medium">Settings</span>}
           </motion.div>
         </Link>
-        <Link href={`/${userType}/login`} onClick={() => setMobileOpen(false)}>
+        <button 
+          onClick={async () => {
+            setMobileOpen(false);
+            const { logout } = await import('@/actions/authActions');
+            await logout();
+          }}
+          className="w-full text-left"
+        >
           <motion.div
             whileHover={{ x: 4 }}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/5 transition-all duration-200 cursor-pointer"
@@ -187,8 +194,9 @@ export default function Sidebar({ navItems, userType }: SidebarProps) {
             </div>
             {!collapsed && <span className="text-sm font-medium">Logout</span>}
           </motion.div>
-        </Link>
+        </button>
       </div>
+
 
       {/* Collapse Button (Desktop) */}
       <div className="hidden lg:flex px-3 pb-5 justify-center">

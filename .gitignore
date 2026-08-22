@@ -1,0 +1,39 @@
+# Root gitignore
+
+# Copy & Backup Directories
+* copy/
+* - Copy/
+* copy
+* - Copy
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Python / Django
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Database & Logs
+*.log

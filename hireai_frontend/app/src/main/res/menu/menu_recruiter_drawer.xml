@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/ic_home_nav_selector"
+            android:title="Dashboard" />
+        <item
+            android:id="@+id/nav_post_job"
+            android:icon="@drawable/ic_add"
+            android:title="Post Job" />
+        <item
+            android:id="@+id/nav_manage_jobs"
+            android:icon="@drawable/ic_briefcase_nav_selector"
+            android:title="Active / Manage Jobs" />
+        <item
+            android:id="@+id/nav_candidates"
+            android:icon="@drawable/ic_people_nav_selector"
+            android:title="Candidates" />
+        <item
+            android:id="@+id/nav_ai_screening"
+            android:icon="@drawable/ic_brain"
+            android:title="AI Resume Screening" />
+        <item
+            android:id="@+id/nav_applications"
+            android:icon="@drawable/ic_offer_nav_selector"
+            android:title="Applications" />
+        <item
+            android:id="@+id/nav_interviews"
+            android:icon="@drawable/ic_video"
+            android:title="Interviews" />
+        <item
+            android:id="@+id/nav_offers"
+            android:icon="@drawable/ic_offer_selected"
+            android:title="Offers" />
+        <item
+            android:id="@+id/nav_hiring_analytics"
+            android:icon="@drawable/ic_chart"
+            android:title="Hiring Analytics" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_profile_nav_selector"
+            android:title="Recruiter Profile" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="Settings" />
+    </group>
+
+    <item android:title="Account">
+        <menu>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_logout"
+                android:title="Logout" />
+        </menu>
+    </item>
+
+</menu>

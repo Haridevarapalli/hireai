@@ -19,7 +19,12 @@ import {
   Menu,
   X,
   Building,
+  Building2,
+  PlusCircle,
+  UserCheck,
+  FileText,
 } from "lucide-react";
+import { logout } from "@/actions/authActions";
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard,
@@ -31,6 +36,10 @@ const iconMap: Record<string, React.ElementType> = {
   BarChart3,
   FileBarChart,
   Building,
+  Building2,
+  PlusCircle,
+  UserCheck,
+  FileText,
   Settings,
   LogOut,
 };
@@ -149,7 +158,15 @@ export default function RecruiterSidebar({ navItems }: RecruiterSidebarProps) {
             {!collapsed && <span className="text-sm font-medium">Settings</span>}
           </motion.div>
         </Link>
-        <Link href={`/recruiter/login`} onClick={() => setMobileOpen(false)}>
+        <button
+          type="button"
+          onClick={async () => {
+            setMobileOpen(false);
+            await logout();
+            window.location.href = "/recruiter/login";
+          }}
+          className="w-full text-left"
+        >
           <motion.div
             whileHover={{ x: 4 }}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 cursor-pointer"
@@ -159,7 +176,7 @@ export default function RecruiterSidebar({ navItems }: RecruiterSidebarProps) {
             </div>
             {!collapsed && <span className="text-sm font-medium">Logout</span>}
           </motion.div>
-        </Link>
+        </button>
       </div>
 
       {/* Collapse Button (Desktop) */}

@@ -140,6 +140,30 @@ public interface ApiService {
     @GET("notifications/mine")
     Call<List<ApiModels.NotificationDto>> getMyNotifications();
 
+    @POST("notifications/mark-all-read")
+    Call<ApiModels.GenericSuccessResponse> markAllNotificationsRead();
+
+    @POST("notifications/{id}/read")
+    Call<ApiModels.GenericSuccessResponse> markNotificationRead(@Path("id") long notificationId);
+
+    @retrofit2.http.DELETE("notifications/{id}")
+    Call<ApiModels.GenericSuccessResponse> deleteNotification(@Path("id") long notificationId);
+
+    @POST("auth/change-password")
+    Call<ApiModels.GenericSuccessResponse> changePassword(@Body ApiModels.ChangePasswordRequest request);
+
+    @GET("candidate/interviews")
+    Call<List<ApiModels.InterviewDto>> getCandidateInterviews();
+
+    @GET("jobs/recommended")
+    Call<List<ApiJob>> getRecommendedJobs();
+
+    @GET("jobs/saved")
+    Call<List<ApiJob>> getSavedJobs();
+
+    @POST("jobs/{id}/save")
+    Call<ApiModels.SaveJobResponse> saveJob(@Path("id") int jobId);
+
     @POST("devices/register")
     Call<ApiModels.DeviceRegisterResponse> registerDevice(@Body ApiModels.DeviceRegisterRequest request);
 

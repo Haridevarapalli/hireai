@@ -1,11 +1,19 @@
 package com.simats.hireai;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+import com.simats.hireai.network.TokenStore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +24,8 @@ public class RecruiterActivity extends AppCompatActivity {
 
     private final Map<Integer, String> tabTags = new HashMap<>();
     private int selectedTabId = R.id.nav_dashboard;
+    private DrawerLayout drawerLayout;
+    private NavigationView drawerNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,26 +45,95 @@ public class RecruiterActivity extends AppCompatActivity {
             selectedTabId = getIntent().getIntExtra(EXTRA_START_TAB, R.id.nav_dashboard);
         }
 
+        drawerLayout = findViewById(R.id.recruiter_drawer_layout);
+        drawerNav = findViewById(R.id.recruiter_drawer_nav);
+
+        ImageButton drawerBtn = findViewById(R.id.recruiter_btn_drawer);
+        if (drawerBtn != null) {
+            drawerBtn.setOnClickListener(v -> {
+                if (drawerLayout != null) {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+        }
+
+        ImageButton notificationsBtn = findViewById(R.id.recruiter_btn_notifications);
+        if (notificationsBtn != null) {
+            notificationsBtn.setOnClickListener(v -> pushScreen(R.layout.fragment_recruiter_notifications));
+        }
+
+        setupDrawerNav();
+
         BottomNavigationView bottomNav = findViewById(R.id.recruiter_bottom_nav);
-        bottomNav.setItemHorizontalTranslationEnabled(false);
-        bottomNav.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == selectedTabId) {
+        if (bottomNav != null) {
+            bottomNav.setItemHorizontalTranslationEnabled(false);
+            bottomNav.setOnItemSelectedListener(item -> {
+                if (item.getItemId() == selectedTabId) {
+                    return true;
+                }
+                switchToTab(item.getItemId());
                 return true;
-            }
-            switchToTab(item.getItemId());
-            return true;
-        });
+            });
+            bottomNav.setSelectedItemId(selectedTabId);
+        }
 
         if (savedInstanceState == null) {
-            switchToTab(selectedTabId);
-        } else {
-            bottomNav.setSelectedItemId(selectedTabId);
             switchToTab(selectedTabId);
         }
     }
 
+    private void setupDrawerNav() {
+        if (drawerNav == null) return;
+        drawerNav.setNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (drawerLayout != null) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            }
+            if (itemId == R.id.nav_logout) {
+                performLogout();
+                return true;
+            }
+            if (itemId == R.id.nav_dashboard) {
+                navigateToRootTab(R.id.nav_dashboard);
+            } else if (itemId == R.id.nav_post_job) {
+                pushScreen(R.layout.fragment_recruiter_post_job);
+            } else if (itemId == R.id.nav_manage_jobs) {
+                navigateToRootTab(R.id.nav_jobs);
+            } else if (itemId == R.id.nav_candidates) {
+                pushScreen(R.layout.fragment_recruiter_candidates);
+            } else if (itemId == R.id.nav_ai_screening) {
+                pushScreen(R.layout.fragment_recruiter_ai_screening);
+            } else if (itemId == R.id.nav_applications) {
+                navigateToRootTab(R.id.nav_applicants);
+            } else if (itemId == R.id.nav_interviews) {
+                pushScreen(R.layout.fragment_recruiter_interviews);
+            } else if (itemId == R.id.nav_offers) {
+                navigateToRootTab(R.id.nav_offers);
+            } else if (itemId == R.id.nav_hiring_analytics) {
+                pushScreen(R.layout.fragment_recruiter_analytics);
+            } else if (itemId == R.id.nav_profile) {
+                navigateToRootTab(R.id.nav_profile);
+            } else if (itemId == R.id.nav_settings) {
+                pushScreen(R.layout.fragment_recruiter_settings);
+            }
+            return true;
+        });
+    }
+
+    private void performLogout() {
+        TokenStore.getInstance(this).clear();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     public void onBackPressed() {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
             return;
@@ -62,7 +141,7 @@ public class RecruiterActivity extends AppCompatActivity {
         if (selectedTabId != R.id.nav_dashboard) {
             selectedTabId = R.id.nav_dashboard;
             BottomNavigationView bottomNav = findViewById(R.id.recruiter_bottom_nav);
-            bottomNav.setSelectedItemId(R.id.nav_dashboard);
+            if (bottomNav != null) bottomNav.setSelectedItemId(R.id.nav_dashboard);
             switchToTab(R.id.nav_dashboard);
             return;
         }
@@ -76,7 +155,11 @@ public class RecruiterActivity extends AppCompatActivity {
     }
 
     public void pushScreen(int layoutResId) {
-        startActivity(RecruiterDetailActivity.createIntent(this, layoutResId));
+        Fragment fragment = StaticLayoutFragment.newInstance(layoutResId);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.recruiter_nav_host, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     public void navigateToRootTab(int tabId) {
@@ -85,7 +168,7 @@ public class RecruiterActivity extends AppCompatActivity {
                 androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
         );
         BottomNavigationView bottomNav = findViewById(R.id.recruiter_bottom_nav);
-        bottomNav.setSelectedItemId(tabId);
+        if (bottomNav != null) bottomNav.setSelectedItemId(tabId);
         switchToTab(tabId);
     }
 

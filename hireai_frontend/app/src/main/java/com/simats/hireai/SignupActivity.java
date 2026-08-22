@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,13 +36,14 @@ public class SignupActivity extends AppCompatActivity {
         CircularProgressIndicator loadingInline = findViewById(R.id.signup_loading_inline);
         TabLayout roleTabs = findViewById(R.id.signup_role_tabs);
 
-        TabLayout.Tab candidateTab = roleTabs.getTabAt(1);
+        TabLayout.Tab candidateTab = roleTabs.getTabAt(0);
         if (candidateTab != null) candidateTab.select();
+        candidateSelected = true;
 
         roleTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                candidateSelected = tab != null && tab.getPosition() == 1;
+                candidateSelected = tab != null && tab.getPosition() == 0;
             }
 
             @Override public void onTabUnselected(TabLayout.Tab tab) { }
@@ -91,7 +92,7 @@ public class SignupActivity extends AppCompatActivity {
                     long delay = Math.max(0L, 450L - elapsed);
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         action.setEnabled(true);
-                        action.setText("Continue");
+                        action.setText("Create Account");
                         loadingInline.setVisibility(View.GONE);
                         nameInput.setEnabled(true);
                         emailInput.setEnabled(true);
@@ -112,7 +113,7 @@ public class SignupActivity extends AppCompatActivity {
                     long delay = Math.max(0L, 300L - elapsed);
                     new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         action.setEnabled(true);
-                        action.setText("Continue");
+                        action.setText("Create Account");
                         loadingInline.setVisibility(View.GONE);
                         nameInput.setEnabled(true);
                         emailInput.setEnabled(true);

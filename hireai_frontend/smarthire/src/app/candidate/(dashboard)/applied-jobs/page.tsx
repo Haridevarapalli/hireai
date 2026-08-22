@@ -1,17 +1,16 @@
 import React from 'react';
 import { getAppliedJobs } from '@/actions/jobActions';
-import { CheckCircle, Clock, Search, Briefcase, MapPin, ChevronRight, Circle } from 'lucide-react';
+import { CheckCircle, Clock, Search, Briefcase, MapPin, ChevronRight, Circle, XCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
 const STATUS_PIPELINE = [
   'Applied',
-  'Under Review',
   'AI Screened',
   'Shortlisted',
   'Interview Scheduled',
-  'Selected'
+  'Hired'
 ];
 
 export default async function AppliedJobsPage() {
@@ -52,8 +51,19 @@ export default async function AppliedJobsPage() {
           </div>
         ) : (
           applications.map(({ application, job }) => {
-            const currentStatusIndex = STATUS_PIPELINE.indexOf(application.status);
+            const isHired = application.status === 'Hired' || application.status === 'Selected' || application.status === 'Offered';
             const isRejected = application.status === 'Rejected';
+            const currentStatusIndex = isHired 
+              ? 4 
+              : application.status === 'Interview Scheduled' || application.status === 'Interview'
+              ? 3
+              : application.status === 'Shortlisted'
+              ? 2
+              : application.status === 'AI Screened' || application.status === 'Under Review'
+              ? 1
+              : application.status === 'Applied'
+              ? 0
+              : STATUS_PIPELINE.indexOf(application.status);
 
             return (
               <div key={application.id} className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm hover:shadow-md transition-shadow">
@@ -81,6 +91,11 @@ export default async function AppliedJobsPage() {
                         <div className="flex items-center gap-1 text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-lg border border-green-100">
                           {application.matchScore}% Match
                         </div>
+                        {isHired && (
+                          <div className="flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-lg border border-emerald-200">
+                            🎉 Hired / Offer Received
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -105,12 +120,12 @@ export default async function AppliedJobsPage() {
                               <div key={status} className="flex flex-col items-center gap-2 group relative cursor-help">
                                 <div className={`
                                   w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-sm text-white text-sm
-                                  ${isCompleted ? 'bg-green-500 border-2 border-green-500' : 'bg-white border-2 border-slate-200 text-slate-300'}
-                                  ${isCurrent ? 'ring-4 ring-green-100' : ''}
+                                  ${isCompleted ? (isHired && index === 4 ? 'bg-emerald-600 border-2 border-emerald-600' : 'bg-green-500 border-2 border-green-500') : 'bg-white border-2 border-slate-200 text-slate-300'}
+                                  ${isCurrent ? (isHired ? 'ring-4 ring-emerald-100' : 'ring-4 ring-green-100') : ''}
                                 `}>
                                   {isCompleted ? <CheckCircle className="w-4 h-4" /> : index + 1}
                                 </div>
-                                <span className={`absolute -bottom-6 w-24 text-center text-[10px] font-semibold hidden sm:block ${isCurrent ? 'text-green-600' : isCompleted ? 'text-slate-600' : 'text-slate-400'}`}>
+                                <span className={`absolute -bottom-6 w-24 text-center text-[10px] font-semibold hidden sm:block ${isCurrent ? (isHired ? 'text-emerald-700 font-bold' : 'text-green-600') : isCompleted ? 'text-slate-600' : 'text-slate-400'}`}>
                                   {status}
                                 </span>
                               </div>

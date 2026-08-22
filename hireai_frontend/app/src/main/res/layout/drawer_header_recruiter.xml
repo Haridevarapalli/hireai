@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="170dp"
+    android:background="#0F172A"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/drawer_recruiter_avatar"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:src="@drawable/bg_avatar_circle" />
+
+    <TextView
+        android:id="@+id/drawer_recruiter_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Recruiter / Talent Manager"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/drawer_recruiter_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="recruiter@smarthire.ai"
+        android:textColor="#94A3B8"
+        android:textSize="13sp" />
+
+</LinearLayout>

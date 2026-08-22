@@ -72,6 +72,7 @@ export default function ResumeAnalysisPage() {
 
   const extractTextFromPDF = async (file: File): Promise<string> => {
     try {
+      // @ts-ignore
       const pdfjsLib = await import("pdfjs-dist/build/pdf");
       pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
       

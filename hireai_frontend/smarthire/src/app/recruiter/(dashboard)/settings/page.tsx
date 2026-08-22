@@ -19,15 +19,75 @@ export default function RecruiterSettingsPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  // Company Profile State
+  const [companyName, setCompanyName] = useState("SmartHire Enterprise");
+  const [recruiterTitle, setRecruiterTitle] = useState("Lead Technical Recruiter");
+  const [recruiterPhone, setRecruiterPhone] = useState("+91 9876543210");
+  const [linkedinUrl, setLinkedinUrl] = useState("https://linkedin.com/company/smarthire");
+  const [recruiterBio, setRecruiterBio] = useState("Hiring exceptional engineers and AI talent.");
+  const [isSavingCompany, setIsSavingCompany] = useState(false);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 3000);
+  };
 
   useEffect(() => {
-    getUserSession().then((res) => {
+    getUserSession().then(async (res) => {
       if (res) {
         setSession(res);
         setNewName(res.name);
+        if (res.token) {
+          try {
+            const profileRes = await fetch(`${process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8000/api'}/recruiter/profile`, {
+              headers: { 'Authorization': `Bearer ${res.token}` },
+              cache: 'no-store',
+            });
+            if (profileRes.ok) {
+              const data = await profileRes.json();
+              if (data.company_name) setCompanyName(data.company_name);
+              if (data.title) setRecruiterTitle(data.title);
+              if (data.phone) setRecruiterPhone(data.phone);
+              if (data.linkedin_url) setLinkedinUrl(data.linkedin_url);
+              if (data.bio) setRecruiterBio(data.bio);
+            }
+          } catch (e) {
+            console.warn('Failed to load recruiter profile:', e);
+          }
+        }
       }
     });
   }, []);
+
+  const handleSaveCompany = async () => {
+    if (!session?.token) return;
+    setIsSavingCompany(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8000/api'}/recruiter/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.token}`,
+        },
+        body: JSON.stringify({
+          company_name: companyName,
+          title: recruiterTitle,
+          phone: recruiterPhone,
+          linkedin_url: linkedinUrl,
+          bio: recruiterBio,
+        }),
+      });
+      if (res.ok) {
+        showToast("Company & recruiter profile updated successfully!");
+      } else {
+        showToast("Failed to update company profile");
+      }
+    } catch (e) {
+      showToast("Network error updating company profile");
+    }
+    setIsSavingCompany(false);
+  };
 
   const getInitials = (name: string) => {
     if (!name) return "U";
@@ -159,23 +219,69 @@ export default function RecruiterSettingsPage() {
             <Building className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-slate-800">Company Information</h2>
-            <p className="text-sm text-slate-500">Update company details visible to candidates.</p>
+            <h2 className="text-lg font-semibold text-slate-800">My Company & Recruiter Profile</h2>
+            <p className="text-sm text-slate-500">Update company details and hiring team bio visible to candidates.</p>
           </div>
         </div>
-        <div className="p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4">
+        <div className="p-6 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-slate-500 mb-1.5 block">Company Name</label>
-              <input type="text" defaultValue="TechCorp India" className="w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2" />
+              <input 
+                type="text" 
+                value={companyName} 
+                onChange={(e) => setCompanyName(e.target.value)} 
+                className="w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-purple-500" 
+              />
             </div>
             <div>
-              <label className="text-xs font-semibold text-slate-500 mb-1.5 block">Website URL</label>
-              <input type="text" defaultValue="https://techcorp.in" className="w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2" />
+              <label className="text-xs font-semibold text-slate-500 mb-1.5 block">Recruiter Designation / Role</label>
+              <input 
+                type="text" 
+                value={recruiterTitle} 
+                onChange={(e) => setRecruiterTitle(e.target.value)} 
+                className="w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-purple-500" 
+              />
             </div>
           </div>
-          <button className="px-4 py-2 bg-slate-100 text-slate-600 font-semibold text-sm rounded-xl hover:bg-slate-200 transition-colors">
-            Update Company Details
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-semibold text-slate-500 mb-1.5 block">Official Phone Number</label>
+              <input 
+                type="text" 
+                value={recruiterPhone} 
+                onChange={(e) => setRecruiterPhone(e.target.value)} 
+                className="w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-purple-500" 
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-slate-500 mb-1.5 block">Company / LinkedIn Profile URL</label>
+              <input 
+                type="text" 
+                value={linkedinUrl} 
+                onChange={(e) => setLinkedinUrl(e.target.value)} 
+                className="w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-purple-500" 
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-500 mb-1.5 block">Company & Hiring Team Bio</label>
+            <textarea 
+              rows={3}
+              value={recruiterBio} 
+              onChange={(e) => setRecruiterBio(e.target.value)} 
+              className="w-full text-sm text-slate-800 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-purple-500" 
+            />
+          </div>
+
+          <button 
+            onClick={handleSaveCompany}
+            disabled={isSavingCompany}
+            className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold text-sm rounded-xl shadow-md transition-colors disabled:opacity-60"
+          >
+            {isSavingCompany ? "Saving Changes..." : "Save Company Profile"}
           </button>
         </div>
       </motion.div>

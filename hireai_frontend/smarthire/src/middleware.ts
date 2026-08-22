@@ -28,12 +28,9 @@ export async function middleware(request: NextRequest) {
   // Candidate route protection (Left untouched as per requirements)
 
   // Root path handling
+  // We removed the auto-redirect so the landing page always shows up first
   if (path === '/') {
-    if (session?.role === 'recruiter') {
-      return NextResponse.redirect(new URL('/recruiter/dashboard', request.url));
-    } else if (session?.role === 'candidate') {
-      return NextResponse.redirect(new URL('/candidate/dashboard', request.url));
-    }
+    // No redirection; let the user see the landing page with portal options.
   }
 
   return NextResponse.next();

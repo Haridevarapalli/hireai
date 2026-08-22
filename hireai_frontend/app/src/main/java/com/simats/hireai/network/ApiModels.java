@@ -79,9 +79,41 @@ public class ApiModels {
         public List<String> requiredSkills;
         @SerializedName("min_match_score")
         public int minMatchScore;
+        @SerializedName("match_score")
+        public Integer matchScore;
+        @SerializedName("matched_skills")
+        public List<String> matchedSkills;
+        @SerializedName("missing_skills")
+        public List<String> missingSkills;
+        @SerializedName("is_saved")
+        public Boolean isSaved;
         public String status;
         @SerializedName("created_at")
         public String createdAt;
+    }
+
+    public static class SaveJobResponse {
+        public boolean saved;
+        public String message;
+    }
+
+    public static class ChangePasswordRequest {
+        @SerializedName("current_password")
+        public String currentPassword;
+        @SerializedName("new_password")
+        public String newPassword;
+    }
+
+    public static class InterviewDto {
+        public int id;
+        @SerializedName("job_title")
+        public String jobTitle;
+        public String company;
+        @SerializedName("scheduled_at")
+        public String scheduledAt;
+        public String status;
+        @SerializedName("meeting_link")
+        public String meetingLink;
     }
 
     public static class PublishJobRequest {

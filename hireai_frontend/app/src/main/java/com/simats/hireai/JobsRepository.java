@@ -107,6 +107,18 @@ public class JobsRepository {
         });
     }
 
+    public void fetchRecommendedJobs(Context context, Callback<List<ApiModels.ApiJob>> callback) {
+        ApiClient.getInstance(context).api().getRecommendedJobs().enqueue(callback);
+    }
+
+    public void fetchSavedJobs(Context context, Callback<List<ApiModels.ApiJob>> callback) {
+        ApiClient.getInstance(context).api().getSavedJobs().enqueue(callback);
+    }
+
+    public void toggleSaveJob(Context context, int jobId, Callback<ApiModels.SaveJobResponse> callback) {
+        ApiClient.getInstance(context).api().saveJob(jobId).enqueue(callback);
+    }
+
     public synchronized Job createJob(
             String title,
             String company,

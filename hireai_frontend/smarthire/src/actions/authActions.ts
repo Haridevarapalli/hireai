@@ -7,75 +7,181 @@ import { createSession, deleteSession, getSession } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+const DJANGO_API_URL = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000/api';
+
+
 export async function signup(formData: FormData, role: 'candidate' | 'recruiter') {
   const name = formData.get('name') as string;
-  const email = formData.get('email') as string;
+  const rawEmail = formData.get('email') as string;
   const password = formData.get('password') as string;
   const companyName = formData.get('companyName') as string | null;
 
-  if (!name || !email || !password) {
+  if (!name || !rawEmail || !password) {
     return { error: 'Missing required fields' };
   }
 
+  const email = rawEmail.trim().toLowerCase();
+  const djangoRole = role === 'candidate' ? 'CANDIDATE' : 'RECRUITER';
+
+  let djangoUserId: number | null = null;
+  let accessToken: string | undefined = undefined;
+  let refreshToken: string | undefined = undefined;
+
+  // 1. Call Django Backend Signup API
   try {
-    // Check if user exists
-    const existing = db.select().from(users).where(eq(users.email, email)).get();
-    if (existing) {
-      return { error: 'Email already in use' };
-    }
-
-    // Insert user
-    const result = db.insert(users).values({
-      name,
-      email,
-      password, // In a real app, hash this!
-      role,
-      companyName,
-    }).returning({ id: users.id }).get();
-
-    // Create session
-    await createSession({
-      userId: result.id,
-      name,
-      email,
-      role,
+    const res = await fetch(`${DJANGO_API_URL}/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        password,
+        full_name: name.trim(),
+        role: djangoRole,
+        phone: '',
+      }),
     });
 
+    const data = await res.json();
+    if (!res.ok && res.status !== 400) {
+      return { error: data.detail || 'Failed to create account on server.' };
+    }
+
+    if (data.user_id) {
+      djangoUserId = Number(data.user_id);
+    }
   } catch (err: any) {
-    return { error: err.message || 'Failed to create account' };
+    console.warn('[Auth] Django signup endpoint warning:', err.message);
   }
+
+  // 2. Attempt Django Login to get JWT Tokens
+  try {
+    const loginRes = await fetch(`${DJANGO_API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (loginRes.ok) {
+      const loginData = await loginRes.json();
+      accessToken = loginData.access;
+      refreshToken = loginData.refresh;
+      if (loginData.user?.id) {
+        djangoUserId = loginData.user.id;
+      }
+    }
+  } catch (err: any) {
+    console.warn('[Auth] Django auto-login warning:', err.message);
+  }
+
+  // 3. Fallback sync to local SQLite for seamless dual compatibility
+  try {
+    const existing = db.select().from(users).where(eq(users.email, email)).get();
+    if (!existing) {
+      db.insert(users).values({
+        id: djangoUserId || undefined,
+        name: name.trim(),
+        email,
+        password,
+        role,
+        companyName: companyName ? companyName.trim() : null,
+      }).run();
+    }
+  } catch (e) {
+    // Ignore local duplicate id error
+  }
+
+  // 4. Create Session with JWT tokens
+  await createSession({
+    userId: djangoUserId || 1,
+    name: name.trim(),
+    email,
+    role,
+    token: accessToken,
+    refreshToken: refreshToken,
+  });
+
   redirect(`/${role}/dashboard`);
 }
 
 export async function login(formData: FormData, role: 'candidate' | 'recruiter') {
-  const email = formData.get('email') as string;
+  const rawEmail = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  if (!email || !password) {
-    return { error: 'Missing required fields' };
+  if (!rawEmail || !password) {
+    return { error: 'Missing email or password' };
   }
 
+  const email = rawEmail.trim().toLowerCase();
+  let userName = role === 'candidate' ? 'Demo Candidate' : 'Demo Recruiter';
+  let userId = 1;
+  let accessToken: string | undefined = undefined;
+  let refreshToken: string | undefined = undefined;
+
+  // 1. Call Django Backend Login API
   try {
-    const user = db.select().from(users).where(eq(users.email, email)).get();
-    if (!user || user.password !== password) {
-      return { error: 'Invalid credentials' };
-    }
-
-    if (user.role !== role) {
-      return { error: `This account belongs to a ${user.role}. Please login through the correct portal.` };
-    }
-
-    // Create session
-    await createSession({
-      userId: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role as 'candidate' | 'recruiter',
+    const res = await fetch(`${DJANGO_API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
     });
 
+    if (res.ok) {
+      const data = await res.json();
+      userId = data.user.id;
+      userName = data.user.full_name || userName;
+      accessToken = data.access;
+      refreshToken = data.refresh;
+
+      const userRole = data.user.role?.toLowerCase();
+      if (userRole && userRole !== role) {
+        return { error: `This account is registered as a ${userRole}. Please sign in through the ${userRole} portal.` };
+      }
+
+      await createSession({
+        userId,
+        name: userName,
+        email,
+        role,
+        token: accessToken,
+        refreshToken,
+      });
+
+      redirect(`/${role}/dashboard`);
+    } else {
+      const errData = await res.json();
+      // If Django returns invalid credentials, check if local fallback matches
+      const localUser = db.select().from(users).where(eq(users.email, email)).get();
+      if (!localUser || localUser.password !== password) {
+        return { error: errData.detail || 'Invalid email or password' };
+      }
+      if (localUser.role !== role) {
+        return { error: `This account is registered as a ${localUser.role}. Please sign in through the ${localUser.role} portal.` };
+      }
+      userName = localUser.name;
+      userId = localUser.id;
+    }
   } catch (err: any) {
-    return { error: err.message || 'Failed to login' };
+    // Django offline fallback to local user check
+    const localUser = db.select().from(users).where(eq(users.email, email)).get();
+    if (!localUser || localUser.password !== password) {
+      return { error: 'Invalid email or password' };
+    }
+    if (localUser.role !== role) {
+      return { error: `This account is registered as a ${localUser.role}. Please sign in through the ${localUser.role} portal.` };
+    }
+    userName = localUser.name;
+    userId = localUser.id;
   }
+
+  await createSession({
+    userId,
+    name: userName,
+    email,
+    role,
+    token: accessToken,
+    refreshToken,
+  });
+
   redirect(`/${role}/dashboard`);
 }
 
@@ -88,17 +194,36 @@ export async function updateProfileName(newName: string) {
   const session = await getSession();
   if (!session) return { error: 'Not authenticated' };
 
+  // 1. Sync to Django Backend
+  if (session.token) {
+    try {
+      const endpoint = session.role === 'candidate' ? '/candidate/profile' : '/recruiter/profile';
+      await fetch(`${DJANGO_API_URL}${endpoint}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.token}`,
+        },
+        body: JSON.stringify({ full_name: newName.trim() }),
+      });
+    } catch (e) {
+      console.warn('[Profile Update] Django sync warning:', e);
+    }
+  }
+
+  // 2. Sync to local database & session
   try {
     await db.update(users)
-      .set({ name: newName })
+      .set({ name: newName.trim() })
       .where(eq(users.id, session.userId));
 
-    // Update session with new name
     await createSession({
       userId: session.userId,
-      name: newName,
+      name: newName.trim(),
       email: session.email,
       role: session.role,
+      token: session.token,
+      refreshToken: session.refreshToken,
     });
 
     revalidatePath('/', 'layout');
@@ -113,11 +238,41 @@ export async function getUserSession() {
 }
 
 export async function mockLogin(role: 'candidate' | 'recruiter') {
+  const email = `demo@${role}.com`;
+  const password = 'Password123!';
+
+  let userId = role === 'recruiter' ? 2 : 1;
+  let userName = role === 'recruiter' ? 'Demo Recruiter' : 'Demo Candidate';
+  let accessToken: string | undefined = undefined;
+  let refreshToken: string | undefined = undefined;
+
+  // Call Django Login
+  try {
+    const res = await fetch(`${DJANGO_API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      userId = data.user.id;
+      userName = data.user.full_name || userName;
+      accessToken = data.access;
+      refreshToken = data.refresh;
+    }
+  } catch (err: any) {
+    console.warn('[MockLogin] Django login warning:', err.message);
+  }
+
   await createSession({
-    userId: 9999,
-    name: role === 'recruiter' ? 'Demo Recruiter' : 'Demo Candidate',
-    email: `demo@${role}.com`,
-    role: role,
+    userId,
+    name: userName,
+    email,
+    role,
+    token: accessToken,
+    refreshToken,
   });
+
   redirect(`/${role}/dashboard`);
 }

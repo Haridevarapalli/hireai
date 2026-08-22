@@ -16,6 +16,7 @@ import {
   Building2,
   CheckCircle,
 } from "lucide-react";
+import { signup } from "@/actions/authActions";
 
 export default function RecruiterSignUpPage() {
   const router = useRouter();
@@ -63,9 +64,19 @@ export default function RecruiterSignUpPage() {
     e.preventDefault();
     if (!validate()) return;
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsLoading(false);
-    router.push("/recruiter");
+
+    const formData = new FormData();
+    formData.append("name", form.recruiterName);
+    formData.append("companyName", form.companyName);
+    formData.append("email", form.email);
+    formData.append("password", form.password);
+
+    const result = await signup(formData, "recruiter");
+    
+    if (result?.error) {
+      setErrors({ email: result.error });
+      setIsLoading(false);
+    }
   };
 
   const inputCls = (field: string) =>

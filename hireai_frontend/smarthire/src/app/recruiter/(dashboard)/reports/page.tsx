@@ -2,16 +2,39 @@
 
 import React, { useState } from "react";
 import { FileBarChart, Download, FileText, LayoutList, PieChart, Loader2, CheckCircle2 } from "lucide-react";
+import { getUserSession } from "@/actions/authActions";
+
+const DJANGO_API_URL = process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8000/api';
 
 export default function ReportsPage() {
   const [generating, setGenerating] = useState<string | null>(null);
 
-  const handleGenerate = (reportName: string) => {
+  const handleGenerate = async (reportName: string) => {
     setGenerating(reportName);
-    setTimeout(() => {
-      setGenerating(null);
-      alert(`${reportName} has been downloaded successfully.`);
-    }, 1500);
+    try {
+      const sess = await getUserSession();
+      if (sess?.token) {
+        const res = await fetch(`${DJANGO_API_URL}/recruiter/applicants`, {
+          headers: { 'Authorization': `Bearer ${sess.token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const headers = "ID,Candidate Name,Email,Job Title,ATS Score,Match Score,Status,Applied Date\n";
+          const rows = data.map((a: any) => 
+            `"${a.id}","${a.candidate_name || ''}","${a.candidate_email || ''}","${a.job_title || ''}","${a.ats_score || a.match_score || ''}","${a.match_score || ''}","${a.status || ''}","${a.applied_at || ''}"`
+          ).join("\n");
+          const blob = new Blob([headers + rows], { type: 'text/csv' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `SmartHire_Report_${Date.now()}.csv`;
+          a.click();
+        }
+      }
+    } catch (e) {
+      console.warn('Report generation warning:', e);
+    }
+    setGenerating(null);
   };
 
   const reports = [

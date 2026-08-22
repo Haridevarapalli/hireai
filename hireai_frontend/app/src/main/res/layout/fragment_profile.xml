@@ -3,34 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@color/bg_light">
+    android:background="#F8FAFC"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="24dp">
+        android:padding="16dp">
 
+        <!-- Hidden views expected by StaticLayoutFragment -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/candidate_profile_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:title="Profile"
-            app:titleCentered="true"
-            app:titleTextColor="@color/text_primary" />
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+        <View
+            android:id="@+id/profile_logout_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
 
+        <!-- Top Profile Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="16dp"
-            app:cardElevation="1dp"
-            app:strokeColor="@color/light_outline"
+            app:cardElevation="2dp"
+            app:strokeColor="#E2E8F0"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -38,30 +39,27 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
-                <FrameLayout
-                    android:id="@+id/profile_avatar"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:background="@drawable/bg_avatar_circle">
-
-                    <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="Avatar"
-                        android:src="@drawable/ic_profile" />
-                </FrameLayout>
+                <TextView
+                    android:id="@+id/profile_avatar_text"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_avatar_circle"
+                    android:gravity="center"
+                    android:text="CA"
+                    android:textColor="#2563EB"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/profile_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Candidate"
-                    android:textColor="@color/text_primary"
-                    android:textSize="24sp"
+                    android:layout_marginTop="12dp"
+                    android:text="Priya Sharma"
+                    android:textColor="#0F172A"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -69,46 +67,53 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="Software Engineer"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="16sp" />
+                    android:text="Senior React &amp; Frontend Developer"
+                    android:textColor="#64748B"
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/profile_city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="India"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="15sp" />
+                    android:text="Bangalore, India"
+                    android:textColor="#64748B"
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/profile_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp" />
+                    android:layout_marginTop="2dp"
+                    android:text="priya.sharma@gmail.com"
+                    android:textColor="#64748B"
+                    android:textSize="13sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/profile_edit_button"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="14dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:text="Edit Profile"
-                    app:cornerRadius="12dp" />
+                    android:textAllCaps="false"
+                    android:textColor="#2563EB"
+                    app:cornerRadius="10dp"
+                    app:strokeColor="#2563EB" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Profile Completion Card -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/profile_completion_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="16dp"
-            app:cardElevation="1dp"
-            app:strokeColor="@color/light_outline"
+            app:cardElevation="2dp"
+            app:strokeColor="#E2E8F0"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -120,82 +125,74 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Complete your profile"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
+                    android:text="Profile Completion Steps"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/profile_completion_tech_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
+                    android:layout_marginTop="10dp"
                     android:gravity="center_vertical"
-                    android:minHeight="48dp"
-                    android:orientation="horizontal"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Tech Stack"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:text="Tech Stack Selection"
+                        android:textColor="#334155"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/profile_completion_tech_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Missing"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
+                        android:text="Completed"
+                        android:textColor="#166534"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/profile_completion_resume_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
+                    android:layout_marginTop="8dp"
                     android:gravity="center_vertical"
-                    android:minHeight="48dp"
-                    android:orientation="horizontal"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Resume"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp" />
+                        android:text="Resume Upload &amp; Parsing"
+                        android:textColor="#334155"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/profile_completion_resume_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Missing"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
+                        android:text="Uploaded"
+                        android:textColor="#166534"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Resume Status Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="16dp"
-            app:cardElevation="1dp"
-            app:strokeColor="@color/light_outline"
+            app:cardElevation="2dp"
+            app:strokeColor="#E2E8F0"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -207,9 +204,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Resume"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
+                    android:text="Resume &amp; ATS Health"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -217,51 +214,53 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="No resume uploaded"
-                    android:textColor="@color/text_secondary"
+                    android:text="Resume uploaded"
+                    android:textColor="#334155"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/profile_resume_filename"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
+                    android:layout_marginTop="2dp"
+                    android:text="priya_sharma_resume.pdf"
+                    android:textColor="#2563EB"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/profile_resume_updated_at"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:visibility="gone" />
+                    android:text="Updated 2 days ago"
+                    android:textColor="#64748B"
+                    android:textSize="12sp" />
 
-                <LinearLayout
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/profile_resume_upload_btn"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="44dp"
                     android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/profile_resume_upload_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Replace Resume"
-                        app:cornerRadius="12dp" />
-                </LinearLayout>
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="Upload New Resume"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    app:backgroundTint="#2563EB"
+                    app:cornerRadius="10dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Skills Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="16dp"
-            app:cardElevation="1dp"
-            app:strokeColor="@color/light_outline"
+            app:cardElevation="2dp"
+            app:strokeColor="#E2E8F0"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -280,21 +279,18 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Skills"
-                        android:textColor="@color/text_primary"
-                        android:textSize="18sp"
+                        android:text="Technical Skills"
+                        android:textColor="#0F172A"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/profile_add_skill"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:padding="8dp"
-                        android:text="Add"
-                        android:textColor="@color/primary_blue"
+                        android:padding="6dp"
+                        android:text="+ Add"
+                        android:textColor="#2563EB"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -308,59 +304,15 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/profile_ai_insights_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:visibility="gone"
-            app:cardBackgroundColor="#FFF8FBFF"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="1dp"
-            app:strokeColor="#FFD9E7FF"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AI Insights"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/profile_ai_strengths"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Strong in: Python, SQL, AWS"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/profile_ai_improvements"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Suggested improvement: Docker, System Design"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
+        <!-- Certifications Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="16dp"
-            app:cardElevation="1dp"
-            app:strokeColor="@color/light_outline"
+            app:cardElevation="2dp"
+            app:strokeColor="#E2E8F0"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -380,20 +332,17 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Certifications"
-                        android:textColor="@color/text_primary"
-                        android:textSize="18sp"
+                        android:textColor="#0F172A"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/profile_add_cert"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:padding="8dp"
-                        android:text="Add"
-                        android:textColor="@color/primary_blue"
+                        android:padding="6dp"
+                        android:text="+ Add"
+                        android:textColor="#2563EB"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -407,24 +356,61 @@
 
                 <TextView
                     android:id="@+id/profile_cert_empty"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="No certifications found"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"
+                    android:text="No certifications added yet."
+                    android:textColor="#64748B"
+                    android:textSize="13sp"
                     android:visibility="gone" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/profile_logout_button"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        <!-- AI Insights Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/profile_ai_insights_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Logout"
-            app:cornerRadius="12dp" />
+            app:cardBackgroundColor="#F5F3FF"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#DDD6FE"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AI Insights &amp; Recommendations"
+                    android:textColor="#5B21B6"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/profile_ai_strengths"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Strong in: React, TypeScript, Redux, Next.js"
+                    android:textColor="#0F172A"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/profile_ai_improvements"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Suggested improvement: AWS, Docker, Kubernetes"
+                    android:textColor="#64748B"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </ScrollView>

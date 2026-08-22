@@ -16,6 +16,7 @@ import {
   TrendingUp,
   User,
   Sparkles,
+  Award,
 } from "lucide-react";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -31,6 +32,7 @@ const iconMap: Record<string, React.ElementType> = {
   Calendar,
   User,
   Sparkles,
+  Award,
 };
 
 interface StatCardProps {
