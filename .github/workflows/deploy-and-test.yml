@@ -97,9 +97,17 @@ jobs:
           echo "Verifying deployment at URL: ${DEPLOY_URL}"
           echo "===================================================="
           
-          # Poll until HTTP 200 is returned
-          timeout 180 bash -c 'while [[ "$(curl -s -o /dev/null -w "%{http_code}" '"${DEPLOY_URL}"')" != "200" ]]; do echo "Waiting for 200 OK from ${DEPLOY_URL}..."; sleep 5; done' || false
-          echo "Live deployment verified! Status HTTP 200 OK."
+          for i in {1..30}; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${DEPLOY_URL}" || echo "000")
+            echo "Attempt $i: HTTP status code is $HTTP_CODE"
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "Live deployment verified! Status HTTP 200 OK."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Timed out waiting for HTTP 200 from ${DEPLOY_URL}"
+          exit 1
 
       - name: Run Selenium Headless E2E Tests
         env:
@@ -112,12 +120,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-test-results
-          path: |
-            hireai_frontend/smarthire/Test Results/Excel/Automation_Test_Report.xlsx
-            hireai_frontend/smarthire/Test Results/HTML/execution-report.html
-            hireai_frontend/smarthire/Test Results/Screenshots/
-            hireai_frontend/smarthire/Test Results/Logs/
-            hireai_frontend/smarthire/Test Results/Summary/summary.md
+          path: hireai_frontend/smarthire/Test Results/
           retention-days: 14
 
       - name: Publish GitHub Actions Execution Summary

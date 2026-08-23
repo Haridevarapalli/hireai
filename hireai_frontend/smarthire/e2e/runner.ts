@@ -1,5 +1,6 @@
 import { Builder, Browser, WebDriver } from 'selenium-webdriver';
 import * as chrome from 'selenium-webdriver/chrome';
+import * as fs from 'fs';
 import { Reporter } from './utils/Reporter';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
@@ -21,6 +22,11 @@ async function runTests() {
     options.addArguments('--disable-dev-shm-usage');
     options.addArguments('--disable-gpu');
     options.addArguments('--window-size=1920,1080');
+
+    // Check system Chrome location on Linux runners
+    if (fs.existsSync('/usr/bin/google-chrome')) {
+        options.setBinaryPath('/usr/bin/google-chrome');
+    }
 
     reporter.log('Initializing Chrome Driver in headless mode...');
     let driver: WebDriver;
@@ -45,6 +51,7 @@ async function runTests() {
     const loginPage = new LoginPage(driver);
     const dashboardPage = new DashboardPage(driver, baseUrl);
 
+    let hasFailures = false;
     let start = Date.now();
 
     // Test 1: Verify Homepage Loads
@@ -59,6 +66,7 @@ async function runTests() {
             durationMs: Date.now() - start
         });
     } catch (e: any) {
+        hasFailures = true;
         const screenshotPath = await reporter.captureScreenshot(driver, 'Verify Homepage Loads');
         reporter.addResult({
             testName: 'Verify Homepage Loads',
@@ -82,6 +90,7 @@ async function runTests() {
             durationMs: Date.now() - start
         });
     } catch (e: any) {
+        hasFailures = true;
         const screenshotPath = await reporter.captureScreenshot(driver, 'Candidate Login Navigation');
         reporter.addResult({
             testName: 'Candidate Login Navigation',
@@ -108,6 +117,7 @@ async function runTests() {
             durationMs: Date.now() - start
         });
     } catch (e: any) {
+        hasFailures = true;
         const screenshotPath = await reporter.captureScreenshot(driver, 'Candidate Invalid Login Validation');
         reporter.addResult({
             testName: 'Candidate Invalid Login Validation',
@@ -131,6 +141,7 @@ async function runTests() {
             durationMs: Date.now() - start
         });
     } catch (e: any) {
+        hasFailures = true;
         const screenshotPath = await reporter.captureScreenshot(driver, 'Recruiter Login Navigation');
         reporter.addResult({
             testName: 'Recruiter Login Navigation',
@@ -153,6 +164,7 @@ async function runTests() {
             durationMs: Date.now() - start
         });
     } catch (e: any) {
+        hasFailures = true;
         const screenshotPath = await reporter.captureScreenshot(driver, 'Candidate Dashboard View');
         reporter.addResult({
             testName: 'Candidate Dashboard View',
@@ -175,6 +187,7 @@ async function runTests() {
             durationMs: Date.now() - start
         });
     } catch (e: any) {
+        hasFailures = true;
         const screenshotPath = await reporter.captureScreenshot(driver, 'Recruiter Dashboard View');
         reporter.addResult({
             testName: 'Recruiter Dashboard View',
@@ -191,6 +204,13 @@ async function runTests() {
 
     reporter.log('Generating Excel, HTML, Markdown and Log reports...');
     await reporter.generateAllReports(baseUrl);
+
+    if (hasFailures) {
+        reporter.log('Test suite completed with failures.');
+        process.exit(1);
+    } else {
+        reporter.log('Test suite completed successfully with all tests passing.');
+    }
 }
 
 runTests().catch((err) => {
