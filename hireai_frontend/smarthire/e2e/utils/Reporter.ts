@@ -87,15 +87,40 @@ export class Reporter {
         const sheet = workbook.addWorksheet('Test Results');
         
         sheet.columns = [
-            { header: 'Test Name', key: 'testName', width: 40 },
+            { header: 'Test Name', key: 'testName', width: 35 },
             { header: 'Status', key: 'status', width: 15 },
             { header: 'Duration (ms)', key: 'durationMs', width: 15 },
-            { header: 'Reason', key: 'reason', width: 50 },
-            { header: 'Screenshot', key: 'screenshotPath', width: 50 }
+            { header: 'Reason / Details', key: 'reason', width: 55 },
+            { header: 'Screenshot Path', key: 'screenshotPath', width: 50 }
         ];
 
+        // Format header row
+        const headerRow = sheet.getRow(1);
+        headerRow.font = { bold: true, color: { argb: 'FFFFFF' } };
+        headerRow.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '1E293B' }
+        };
+
         this.results.forEach(res => {
-            sheet.addRow(res);
+            const row = sheet.addRow({
+                testName: res.testName,
+                status: res.status,
+                durationMs: res.durationMs,
+                reason: res.reason || '',
+                screenshotPath: res.screenshotPath ? path.basename(res.screenshotPath) : ''
+            });
+
+            // Color coding for status
+            const statusCell = row.getCell('status');
+            if (res.status === 'Passed') {
+                statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'DCFCE7' } };
+                statusCell.font = { color: { argb: '15803D' }, bold: true };
+            } else if (res.status === 'Failed') {
+                statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FEE2E2' } };
+                statusCell.font = { color: { argb: 'B91C1C' }, bold: true };
+            }
         });
 
         const excelPath = path.join(this.excelDir, 'Automation_Test_Report.xlsx');
@@ -111,38 +136,87 @@ export class Reporter {
         let rowsHtml = '';
         this.results.forEach(r => {
             const rowClass = r.status === 'Passed' ? 'table-success' : r.status === 'Failed' ? 'table-danger' : 'table-warning';
+            const screenshotLink = r.screenshotPath 
+                ? `<a href="../Screenshots/${path.basename(r.screenshotPath)}" target="_blank">View Screenshot</a>` 
+                : 'N/A';
             rowsHtml += `
                 <tr class="${rowClass}">
-                    <td>${r.testName}</td>
-                    <td>${r.status}</td>
-                    <td>${r.durationMs}</td>
-                    <td>${r.reason || ''}</td>
-                    <td>${r.screenshotPath ? `<a href="../Screenshots/${path.basename(r.screenshotPath)}">View</a>` : ''}</td>
+                    <td><strong>${r.testName}</strong></td>
+                    <td><span class="badge ${r.status === 'Passed' ? 'bg-success' : r.status === 'Failed' ? 'bg-danger' : 'bg-warning'}">${r.status}</span></td>
+                    <td>${r.durationMs} ms</td>
+                    <td>${r.reason || 'Completed successfully'}</td>
+                    <td>${screenshotLink}</td>
                 </tr>
             `;
         });
 
         const html = `
         <!DOCTYPE html>
-        <html>
+        <html lang="en">
         <head>
-            <title>E2E Execution Report</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            <style>body { padding: 20px; }</style>
+            <meta charset="UTF-8">
+            <title>Selenium E2E Test Execution Report</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body { background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; padding: 30px; }
+                .card-stat { border-radius: 12px; border: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+            </style>
         </head>
         <body>
-            <h1>E2E Test Execution Report</h1>
-            <p><strong>URL:</strong> <a href="${deploymentUrl}">${deploymentUrl}</a></p>
-            <div class="row mb-4">
-                <div class="col-md-3"><div class="card bg-primary text-white p-3">Total: ${total}</div></div>
-                <div class="col-md-3"><div class="card bg-success text-white p-3">Passed: ${passed}</div></div>
-                <div class="col-md-3"><div class="card bg-danger text-white p-3">Failed: ${failed}</div></div>
-                <div class="col-md-3"><div class="card bg-warning text-dark p-3">Skipped: ${skipped}</div></div>
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2>Selenium E2E Test Execution Report</h2>
+                        <p class="text-muted mb-0">Tested URL: <a href="${deploymentUrl}" target="_blank">${deploymentUrl}</a></p>
+                    </div>
+                    <span class="text-muted">Executed on: ${new Date().toLocaleString()}</span>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="card card-stat bg-primary text-white p-3">
+                            <h6 class="mb-1 text-white-50">Total Tests</h6>
+                            <h3 class="mb-0">${total}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card card-stat bg-success text-white p-3">
+                            <h6 class="mb-1 text-white-50">Passed</h6>
+                            <h3 class="mb-0">${passed}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card card-stat bg-danger text-white p-3">
+                            <h6 class="mb-1 text-white-50">Failed</h6>
+                            <h3 class="mb-0">${failed}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card card-stat bg-warning text-dark p-3">
+                            <h6 class="mb-1 text-dark-50">Skipped</h6>
+                            <h3 class="mb-0">${skipped}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-stat p-3">
+                    <h5 class="mb-3">Test Case Results</h5>
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Test Name</th>
+                                <th>Status</th>
+                                <th>Duration</th>
+                                <th>Details / Error</th>
+                                <th>Screenshot</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <table class="table table-bordered">
-                <thead><tr><th>Test Name</th><th>Status</th><th>Duration (ms)</th><th>Reason</th><th>Screenshot</th></tr></thead>
-                <tbody>${rowsHtml}</tbody>
-            </table>
         </body>
         </html>
         `;
@@ -155,13 +229,13 @@ export class Reporter {
         const failed = this.results.filter(r => r.status === 'Failed').length;
         const skipped = this.results.filter(r => r.status === 'Skipped').length;
         const total = this.results.length;
-        const passPercentage = total === 0 ? 0 : ((passed / total) * 100).toFixed(2);
+        const passPercentage = total === 0 ? '0.00' : ((passed / total) * 100).toFixed(2);
 
-        let failedTestsMd = '';
+        let failedTestsSection = '';
         if (failed > 0) {
-            failedTestsMd = 'Failed Tests:\n';
+            failedTestsSection = '\nFailed Tests:\n';
             this.results.filter(r => r.status === 'Failed').forEach(r => {
-                failedTestsMd += `- ${r.testName}\n  - Failure Reason: ${r.reason}\n`;
+                failedTestsSection += `- ${r.testName}\n  - Failure Reason: ${r.reason || 'Unknown error'}\n`;
             });
         }
 
@@ -175,12 +249,10 @@ Passed: ${passed}
 Failed: ${failed}
 Skipped: ${skipped}
 Pass Percentage: ${passPercentage}%
+${failedTestsSection}`;
 
-${failedTestsMd}
-`;
         fs.writeFileSync(path.join(this.summaryDir, 'summary.md'), md);
         
-        // Also write to GitHub Step Summary if running in Actions
         if (process.env.GITHUB_STEP_SUMMARY) {
             fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + '\n');
         }

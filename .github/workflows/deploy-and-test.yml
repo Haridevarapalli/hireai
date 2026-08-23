@@ -7,11 +7,13 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -94,6 +96,8 @@ jobs:
           echo "===================================================="
           echo "Verifying deployment at URL: ${DEPLOY_URL}"
           echo "===================================================="
+          
+          # Poll until HTTP 200 is returned
           timeout 180 bash -c 'while [[ "$(curl -s -o /dev/null -w "%{http_code}" '"${DEPLOY_URL}"')" != "200" ]]; do echo "Waiting for 200 OK from ${DEPLOY_URL}..."; sleep 5; done' || false
           echo "Live deployment verified! Status HTTP 200 OK."
 

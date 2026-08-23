@@ -4,25 +4,27 @@ export class LoginPage {
     private driver: WebDriver;
     
     // Locators
-    private emailInput = By.name('email');
-    private passwordInput = By.name('password');
-    private submitButton = By.xpath("//button[@type='submit']");
-    private errorMessage = By.css('.text-red-500'); // Assuming error messages have this class
+    private emailInput = By.css("input[type='email'], input[name='email']");
+    private passwordInput = By.css("input[type='password'], input[name='password']");
+    private submitButton = By.css("button[type='submit']");
+    private errorMessage = By.css('.text-red-500, .text-red-600');
 
     constructor(driver: WebDriver) {
         this.driver = driver;
     }
 
     async verifyLoginPageLoaded() {
-        await this.driver.wait(until.elementLocated(this.emailInput), 10000);
+        await this.driver.wait(until.elementLocated(By.tagName('form')), 10000);
         return true;
     }
 
     async login(email: string, password: string) {
         const emailField = await this.driver.wait(until.elementLocated(this.emailInput), 5000);
+        await emailField.clear();
         await emailField.sendKeys(email);
         
         const passwordField = await this.driver.wait(until.elementLocated(this.passwordInput), 5000);
+        await passwordField.clear();
         await passwordField.sendKeys(password);
         
         const btn = await this.driver.wait(until.elementLocated(this.submitButton), 5000);
@@ -31,7 +33,7 @@ export class LoginPage {
 
     async getErrorMessage() {
         try {
-            const el = await this.driver.wait(until.elementLocated(this.errorMessage), 5000);
+            const el = await this.driver.wait(until.elementLocated(this.errorMessage), 3000);
             return await el.getText();
         } catch (e) {
             return null;

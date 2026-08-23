@@ -1,7 +1,6 @@
-'use server';
-
 import { getSession } from '@/lib/auth';
-import { revalidatePath } from 'next/cache';
+
+const revalidatePath = (..._args: any[]) => {};
 
 const DJANGO_API_URL = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000/api';
 

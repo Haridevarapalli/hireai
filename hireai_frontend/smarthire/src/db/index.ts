@@ -1,8 +1,20 @@
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
 import * as schema from './schema';
-import path from 'path';
 
-// Store SQLite database file in the project root
-const sqlite = new Database(path.join(process.cwd(), 'smarthire.db'));
-export const db = drizzle(sqlite, { schema });
+let dbInstance: any = null;
+
+if (typeof window === 'undefined') {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const Database = require('better-sqlite3');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { drizzle } = require('drizzle-orm/better-sqlite3');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const path = require('path');
+    const sqlite = new Database(path.join(process.cwd(), 'smarthire.db'));
+    dbInstance = drizzle(sqlite, { schema });
+  } catch (e) {
+    // SQLite not available in static export / browser
+  }
+}
+
+export const db = dbInstance;

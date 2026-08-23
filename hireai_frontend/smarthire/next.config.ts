@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
 
   allowedDevOrigins: ['10.44.60.185'],
 
-  output: process.env.GITHUB_ACTIONS ? 'export' : undefined,
+  output: 'export',
+  basePath: process.env.BASE_PATH !== undefined ? process.env.BASE_PATH : (process.env.GITHUB_ACTIONS ? '/hireai' : ''),
 
   images: {
     unoptimized: true,
