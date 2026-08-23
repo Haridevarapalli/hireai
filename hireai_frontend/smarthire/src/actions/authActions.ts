@@ -1,7 +1,10 @@
+'use server';
+
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { createSession, deleteSession, getSession } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 const DJANGO_API_URL = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000/api';
@@ -223,6 +226,7 @@ export async function updateProfileName(newName: string) {
       refreshToken: session.refreshToken,
     });
 
+    revalidatePath('/', 'layout');
     return { success: true };
   } catch (err: any) {
     return { error: err.message || 'Failed to update profile' };

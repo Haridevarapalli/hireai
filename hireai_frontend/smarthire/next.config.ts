@@ -3,10 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   devIndicators: false,
 
-  allowedDevOrigins: ['10.44.60.185'],
+  allowedDevOrigins: ['10.44.60.185', '10.60.177.185'],
 
-  output: 'export',
-  basePath: process.env.BASE_PATH !== undefined ? process.env.BASE_PATH : (process.env.GITHUB_ACTIONS ? '/hireai' : ''),
+  output: process.env.GITHUB_ACTIONS ? 'export' : undefined,
 
   images: {
     unoptimized: true,

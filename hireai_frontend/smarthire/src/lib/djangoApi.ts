@@ -6,10 +6,12 @@
 // Base API URL resolver (Android emulator uses 10.0.2.2 to reach host machine, web uses localhost)
 export function getApiBaseUrl(): string {
   if (typeof window !== 'undefined') {
-    // If running inside native Capacitor on Android
     const isAndroid = /Android/i.test(navigator.userAgent);
-    if (isAndroid && window.location.protocol === 'https:' && window.location.hostname === 'localhost') {
-      return 'http://10.0.2.2:8000/api';
+    if (isAndroid) {
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://10.0.2.2:8000/api';
+      }
+      return `http://${window.location.hostname}:8000/api`;
     }
   }
   return process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8000/api';

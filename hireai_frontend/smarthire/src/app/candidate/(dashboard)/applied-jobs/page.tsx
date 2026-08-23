@@ -3,6 +3,8 @@ import { getAppliedJobs } from '@/actions/jobActions';
 import { CheckCircle, Clock, Search, Briefcase, MapPin, ChevronRight, Circle, XCircle } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 const STATUS_PIPELINE = [
   'Applied',
   'AI Screened',
@@ -48,7 +50,7 @@ export default async function AppliedJobsPage() {
             </Link>
           </div>
         ) : (
-          applications.map(({ application, job }: any) => {
+          applications.map(({ application, job }) => {
             const isHired = application.status === 'Hired' || application.status === 'Selected' || application.status === 'Offered';
             const isRejected = application.status === 'Rejected';
             const currentStatusIndex = isHired 

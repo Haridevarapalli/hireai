@@ -1,10 +1,11 @@
+'use server';
+
 import { db } from '@/db';
 import { jobs, applications, savedJobs, resumes } from '@/db/schema';
 import { eq, and, desc, inArray } from 'drizzle-orm';
 import { getSession } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
 import { parseArray } from '@/utils/scoring';
-
-const revalidatePath = (..._args: any[]) => {};
 
 const DJANGO_API_URL = process.env.DJANGO_API_URL || 'http://127.0.0.1:8000/api';
 
