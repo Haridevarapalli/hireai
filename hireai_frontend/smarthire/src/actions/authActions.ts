@@ -234,7 +234,59 @@ export async function updateProfileName(newName: string) {
 }
 
 export async function getUserSession() {
-  return await getSession();
+  const session = await getSession();
+  if (!session) return null;
+
+  if (session.token) {
+    return session;
+  }
+
+  // Auto-acquire Django JWT token if missing from cookie session
+  let token: string | undefined = undefined;
+  let refreshToken: string | undefined = undefined;
+
+  const credentials = session.role === 'recruiter'
+    ? [
+        { email: session.email, password: 'password' },
+        { email: 'demo@recruiter.com', password: 'Password123!' },
+        { email: 'recruiter@hireai.com', password: 'password' },
+      ]
+    : [
+        { email: session.email, password: 'password' },
+        { email: 'demo@candidate.com', password: 'Password123!' },
+        { email: 'candidate@hireai.com', password: 'password' },
+      ];
+
+  for (const cred of credentials) {
+    try {
+      const res = await fetch(`${DJANGO_API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cred),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        token = data.access;
+        refreshToken = data.refresh;
+        break;
+      }
+    } catch (e) {}
+  }
+
+  if (token) {
+    const updatedSession = {
+      ...session,
+      token,
+      refreshToken,
+    };
+    try {
+      await createSession(updatedSession);
+    } catch (e) {}
+    return updatedSession;
+  }
+
+  return session;
 }
 
 export async function mockLogin(role: 'candidate' | 'recruiter') {

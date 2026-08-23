@@ -118,12 +118,12 @@ export default function RecruiterDashboard() {
           if (res.ok) {
             const data = await res.json();
             setStatsData({
-              activeJobs: data.live_jobs_count || 18,
-              totalApplications: data.total_applications_count || 38,
-              aiScreened: data.ai_screened_count || 38,
-              shortlisted: data.shortlisted_count || 24,
-              interviews: data.interviews_count || 12,
-              hired: data.hired_count || 8,
+              activeJobs: data.live_jobs_count ?? 18,
+              totalApplications: data.total_applications_count ?? (data.new_applicants_count ?? 38),
+              aiScreened: data.ai_screened_count ?? 38,
+              shortlisted: data.shortlisted_count ?? 24,
+              interviews: data.interviews_count ?? 12,
+              hired: data.hired_count ?? (data.offers_sent_count ?? 8),
             });
 
             if (data.pipeline) {
