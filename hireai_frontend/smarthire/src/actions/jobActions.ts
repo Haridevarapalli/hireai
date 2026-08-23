@@ -33,42 +33,45 @@ function calculateMatchScore(candidateSkills: string[], jobRequirements: string[
 export async function getJobs(searchParams?: { search?: string; type?: string; location?: string }) {
   const session = await getSession();
 
-  // 1. Fetch from Django Backend API if token is available
-  if (session?.token) {
-    try {
-      const query = new URLSearchParams();
-      if (searchParams?.search) query.append('search', searchParams.search);
-      if (searchParams?.type) query.append('type', searchParams.type);
-      
-      const res = await fetch(`${DJANGO_API_URL}/jobs/?${query.toString()}`, {
-        headers: { 'Authorization': `Bearer ${session.token}` },
-        cache: 'no-store',
-      });
-
-      if (res.ok) {
-        const djangoJobs = await res.json();
-        if (Array.isArray(djangoJobs) && djangoJobs.length > 0) {
-          return djangoJobs.map((j: any) => ({
-            id: j.id,
-            title: j.title,
-            companyName: j.company,
-            location: j.location || (j.is_remote ? 'Remote' : 'India'),
-            salary: formatSalary(j.salary_min, j.salary_max),
-            type: j.role_type === 'FULL_TIME' ? 'Full-time' : j.role_type === 'CONTRACT' ? 'Contract' : 'Part-time',
-            experience: '2-5 Years',
-            description: j.description || `${j.title} at ${j.company}.`,
-            requirements: JSON.stringify(j.required_skills || []),
-            responsibilities: JSON.stringify(['Collaborate with product and engineering teams', 'Deliver scalable, high-performance software features']),
-            benefits: JSON.stringify(['Health Insurance', 'Flexible Work Options', 'Learning Allowance']),
-            deadline: '2026-12-31',
-            recruiterId: j.created_by || 1,
-            createdAt: new Date(j.created_at || Date.now()),
-          }));
-        }
-      }
-    } catch (e) {
-      console.warn('[Jobs] Django fetch warning:', e);
+  // 1. Fetch from Django Backend API (authoritative source)
+  try {
+    const query = new URLSearchParams();
+    if (searchParams?.search) query.append('search', searchParams.search);
+    if (searchParams?.type) query.append('type', searchParams.type);
+    
+    const headers: Record<string, string> = {};
+    if (session?.token) {
+      headers['Authorization'] = `Bearer ${session.token}`;
     }
+
+    const res = await fetch(`${DJANGO_API_URL}/jobs/?${query.toString()}`, {
+      headers,
+      cache: 'no-store',
+    });
+
+    if (res.ok) {
+      const djangoJobs = await res.json();
+      if (Array.isArray(djangoJobs) && djangoJobs.length > 0) {
+        return djangoJobs.map((j: any) => ({
+          id: j.id,
+          title: j.title,
+          companyName: j.company,
+          location: j.location || (j.is_remote ? 'Remote' : 'India'),
+          salary: formatSalary(j.salary_min, j.salary_max),
+          type: j.role_type === 'FULL_TIME' ? 'Full-time' : j.role_type === 'CONTRACT' ? 'Contract' : 'Part-time',
+          experience: '2-5 Years',
+          description: j.description || `${j.title} at ${j.company}.`,
+          requirements: JSON.stringify(j.required_skills || []),
+          responsibilities: JSON.stringify(['Collaborate with product and engineering teams', 'Deliver scalable, high-performance software features']),
+          benefits: JSON.stringify(['Health Insurance', 'Flexible Work Options', 'Learning Allowance']),
+          deadline: '2026-12-31',
+          recruiterId: j.created_by || 1,
+          createdAt: new Date(j.created_at || Date.now()),
+        }));
+      }
+    }
+  } catch (e) {
+    console.warn('[Jobs] Django fetch warning:', e);
   }
 
   // 2. Fallback to local SQLite database

@@ -238,31 +238,42 @@ export async function getUserSession() {
 }
 
 export async function mockLogin(role: 'candidate' | 'recruiter') {
-  const email = `demo@${role}.com`;
-  const password = 'Password123!';
+  const credentials = role === 'recruiter' 
+    ? [
+        { email: 'demo@recruiter.com', password: 'Password123!' },
+        { email: 'recruiter@hireai.com', password: 'password' },
+      ]
+    : [
+        { email: 'demo@candidate.com', password: 'Password123!' },
+        { email: 'candidate@hireai.com', password: 'password' },
+      ];
 
-  let userId = role === 'recruiter' ? 2 : 1;
+  let userId = role === 'recruiter' ? 8 : 7;
   let userName = role === 'recruiter' ? 'Demo Recruiter' : 'Demo Candidate';
+  let email = credentials[0].email;
   let accessToken: string | undefined = undefined;
   let refreshToken: string | undefined = undefined;
 
-  // Call Django Login
-  try {
-    const res = await fetch(`${DJANGO_API_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+  for (const cred of credentials) {
+    try {
+      const res = await fetch(`${DJANGO_API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cred),
+      });
 
-    if (res.ok) {
-      const data = await res.json();
-      userId = data.user.id;
-      userName = data.user.full_name || userName;
-      accessToken = data.access;
-      refreshToken = data.refresh;
+      if (res.ok) {
+        const data = await res.json();
+        userId = data.user.id;
+        userName = data.user.full_name || userName;
+        email = cred.email;
+        accessToken = data.access;
+        refreshToken = data.refresh;
+        break;
+      }
+    } catch (err: any) {
+      console.warn('[MockLogin] Django login warning:', err.message);
     }
-  } catch (err: any) {
-    console.warn('[MockLogin] Django login warning:', err.message);
   }
 
   await createSession({
