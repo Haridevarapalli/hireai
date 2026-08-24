@@ -24,23 +24,25 @@ jobs:
       - name: 1. Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 2. Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
           cache-dependency-path: hireai_frontend/smarthire/package-lock.json
 
-      - name: 2. Setup Java & Android SDK Environment
+      - name: 3. Setup Java Environment
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
+      - name: 4. Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Node Dependencies
+      - name: 5. Install Node Dependencies
+        env:
+          GITHUB_ACTIONS: ""
         run: npm ci
         working-directory: hireai_frontend/smarthire
 
@@ -50,13 +52,15 @@ jobs:
           npx appium driver install uiautomator2 || true
         working-directory: hireai_frontend/smarthire
 
-      - name: 4. Build SmartHire Android Debug APK
+      - name: 6. Build SmartHire Android Debug APK
+        env:
+          GITHUB_ACTIONS: ""
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
         working-directory: hireai_frontend/smarthire/android
 
-      - name: 3. Start Android Emulator, 4. Install APK & Run App
+      - name: 7. Start Android Emulator & Install SmartHire APK
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
@@ -67,26 +71,30 @@ jobs:
             echo "Waiting for emulator..."
             adb devices
             echo "Installing SmartHire APK (com.smarthire.ai)..."
-            adb install hireai_frontend/smarthire/android/app/build/outputs/apk/debug/app-debug.apk || echo "APK installation completed"
+            adb install hireai_frontend/smarthire/android/app/build/outputs/apk/debug/app-debug.apk || echo "APK installation complete"
 
-      - name: 5. Start Appium Server (Background Task)
+      - name: 8. Start Appium Server (Background Task)
         run: |
           npx appium --port 4723 --base-path /wd/hub > appium.log 2>&1 &
           sleep 5
           curl -s http://localhost:4723/wd/hub/status || echo "Appium server started"
         working-directory: hireai_frontend/smarthire
 
-      - name: 6. Execute Appium E2E Tests & 7-9. Generate Reports
+      - name: 9. Start Next.js & Execute Appium E2E Tests (runner.ts)
         id: run_tests
         continue-on-error: true
         env:
+          GITHUB_ACTIONS: ""
           BASE_URL: "http://10.0.2.2:3000"
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: npm run test:e2e-mobile
+        run: |
+          npm run dev -- --port 3000 &
+          sleep 10
+          npm run test:e2e-mobile
         working-directory: hireai_frontend/smarthire
 
-      - name: 10. Upload Test Result Artifacts (if: always)
+      - name: 10. Generate & Upload Artifacts (if: always)
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -112,7 +120,7 @@ jobs:
             echo "Report URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/latest/execution-report.html" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Prepare GitHub Pages Folder Structure
+      - name: Prepare GitHub Pages Reports Directory Structure
         if: always()
         run: |
           mkdir -p gh-pages-reports/reports/latest/screenshots
@@ -132,7 +140,7 @@ jobs:
             cp -r hireai_frontend/smarthire/Test\ Results/Logs/* gh-pages-reports/reports/latest/logs/ || true
           fi
 
-          # Duplicate into build history
+          # Copy latest to history/build-XXX
           cp -r gh-pages-reports/reports/latest/* gh-pages-reports/reports/history/build-${{ github.run_number }}/
 
           cat << 'EOF' > gh-pages-reports/index.html
@@ -158,7 +166,7 @@ jobs:
         with:
           path: ./gh-pages-reports
 
-      - name: 11. Publish HTML Reports to GitHub Pages
+      - name: 12. Publish HTML Reports to GitHub Pages
         if: always()
         id: deployment
         uses: actions/deploy-pages@v4
