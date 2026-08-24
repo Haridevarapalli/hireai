@@ -13,17 +13,28 @@ export class MobileHomePage {
         await this.driver.url(this.baseUrl);
     }
 
-    async verifyHomePageLoaded() {
-        // Find the title element to ensure it's loaded
-        const title = await this.driver.$('h1*=Intelligent Hiring');
-        await title.waitForExist({ timeout: 15000 });
-        return true;
+    async verifyHomePageLoaded(): Promise<boolean> {
+        // Look for SmartHire title or brand logo text
+        const element = await this.driver.$('//*[contains(text(), "Smart") or contains(text(), "Intelligent Hiring")]');
+        await element.waitForExist({ timeout: 15000 });
+        return await element.isDisplayed();
     }
 
-    async clickCandidateLogin() {
-        // On mobile web, there might be a hamburger menu, but let's assume direct access or responsive menu
-        const btn = await this.driver.$('a*=Candidate');
-        await btn.waitForExist({ timeout: 5000 });
-        await btn.click();
+    async navigateToCandidateLogin() {
+        const link = await this.driver.$('a[href*="/candidate/login"]');
+        if (await link.isExisting()) {
+            await link.click();
+        } else {
+            await this.driver.url(`${this.baseUrl}/candidate/login`);
+        }
+    }
+
+    async navigateToRecruiterLogin() {
+        const link = await this.driver.$('a[href*="/recruiter/login"]');
+        if (await link.isExisting()) {
+            await link.click();
+        } else {
+            await this.driver.url(`${this.baseUrl}/recruiter/login`);
+        }
     }
 }

@@ -1,0 +1,85 @@
+name: Deploy Test Reports to GitHub Pages
+
+on:
+  workflow_run:
+    workflows: ["Android Appium E2E Tests & Report Generation"]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy-reports:
+    name: Publish Appium Test Reports to GitHub Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Download Test Results Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: appium-e2e-test-results
+          path: hireai_frontend/smarthire/Test Results/
+        continue-on-error: true
+
+      - name: Prepare GitHub Pages Reports Directory Structure
+        run: |
+          mkdir -p gh-pages-reports/reports/latest/screenshots
+          mkdir -p gh-pages-reports/reports/latest/logs
+          mkdir -p gh-pages-reports/reports/history/build-${{ github.run_number }}
+
+          if [ -f "hireai_frontend/smarthire/Test Results/HTML/execution-report.html" ]; then
+            cp "hireai_frontend/smarthire/Test Results/HTML/execution-report.html" gh-pages-reports/reports/latest/
+          fi
+          if [ -f "hireai_frontend/smarthire/Test Results/Summary/summary.md" ]; then
+            cp "hireai_frontend/smarthire/Test Results/Summary/summary.md" gh-pages-reports/reports/latest/
+          fi
+          if [ -d "hireai_frontend/smarthire/Test Results/Screenshots" ]; then
+            cp -r hireai_frontend/smarthire/Test\ Results/Screenshots/* gh-pages-reports/reports/latest/screenshots/ || true
+          fi
+          if [ -d "hireai_frontend/smarthire/Test Results/Logs" ]; then
+            cp -r hireai_frontend/smarthire/Test\ Results/Logs/* gh-pages-reports/reports/latest/logs/ || true
+          fi
+
+          cp -r gh-pages-reports/reports/latest/* gh-pages-reports/reports/history/build-${{ github.run_number }}/
+
+          cat << 'EOF' > gh-pages-reports/index.html
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta http-equiv="refresh" content="0; url=reports/latest/execution-report.html" />
+            <title>Appium Test Reports</title>
+          </head>
+          <body>
+            <p>Redirecting to <a href="reports/latest/execution-report.html">latest execution report</a>...</p>
+          </body>
+          </html>
+          EOF
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./gh-pages-reports
+
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Output Live Report URL
+        run: |
+          echo "===================================================="
+          echo "Live Report URL:"
+          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/latest/execution-report.html"
+          echo "===================================================="

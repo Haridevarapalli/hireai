@@ -7,30 +7,29 @@ export class MobileLoginPage {
         this.driver = driver;
     }
 
-    async verifyLoginPageLoaded() {
-        const emailInput = await this.driver.$('input[name="email"]');
-        await emailInput.waitForExist({ timeout: 10000 });
-        return true;
+    async verifyRecruiterLoginPageLoaded(): Promise<boolean> {
+        const title = await this.driver.$('//*[contains(text(), "Recruiter") or contains(text(), "Welcome back")]');
+        await title.waitForExist({ timeout: 10000 });
+        return await title.isDisplayed();
     }
 
-    async login(email: string, password: string) {
-        const emailInput = await this.driver.$('input[name="email"]');
+    async verifyCandidateLoginPageLoaded(): Promise<boolean> {
+        const title = await this.driver.$('//*[contains(text(), "Candidate") or contains(text(), "Sign in")]');
+        await title.waitForExist({ timeout: 10000 });
+        return await title.isDisplayed();
+    }
+
+    async fillCredentials(email: string, pass: string) {
+        const emailInput = await this.driver.$('input[type="email"], input[name="email"]');
+        await emailInput.waitForExist({ timeout: 5000 });
         await emailInput.setValue(email);
-        
-        const passwordInput = await this.driver.$('input[name="password"]');
-        await passwordInput.setValue(password);
-        
+
+        const passInput = await this.driver.$('input[type="password"], input[name="password"]');
+        await passInput.setValue(pass);
+    }
+
+    async submitLogin() {
         const btn = await this.driver.$('button[type="submit"]');
         await btn.click();
-    }
-
-    async getErrorMessage() {
-        try {
-            const errorEl = await this.driver.$('.text-red-500');
-            await errorEl.waitForExist({ timeout: 5000 });
-            return await errorEl.getText();
-        } catch (e) {
-            return null;
-        }
     }
 }

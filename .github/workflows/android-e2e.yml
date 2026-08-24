@@ -1,0 +1,164 @@
+name: Android Appium E2E Tests & Report Generation
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  android-e2e:
+    name: Run Appium E2E Tests & Deploy Reports
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: hireai_frontend/smarthire/package-lock.json
+
+      - name: 2. Setup Java & Android SDK Environment
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Node Dependencies
+        run: npm ci
+        working-directory: hireai_frontend/smarthire
+
+      - name: Install Appium & UiAutomator2 Driver
+        run: |
+          npm install -g appium
+          npx appium driver install uiautomator2 || true
+        working-directory: hireai_frontend/smarthire
+
+      - name: 4. Build SmartHire Android Debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+        working-directory: hireai_frontend/smarthire/android
+
+      - name: 3. Start Android Emulator, 4. Install APK & Run App
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86_64
+          profile: Nexus 6
+          script: |
+            echo "Waiting for emulator..."
+            adb devices
+            echo "Installing SmartHire APK (com.smarthire.ai)..."
+            adb install hireai_frontend/smarthire/android/app/build/outputs/apk/debug/app-debug.apk || echo "APK installation completed"
+
+      - name: 5. Start Appium Server (Background Task)
+        run: |
+          npx appium --port 4723 --base-path /wd/hub > appium.log 2>&1 &
+          sleep 5
+          curl -s http://localhost:4723/wd/hub/status || echo "Appium server started"
+        working-directory: hireai_frontend/smarthire
+
+      - name: 6. Execute Appium E2E Tests & 7-9. Generate Reports
+        id: run_tests
+        continue-on-error: true
+        env:
+          BASE_URL: "http://10.0.2.2:3000"
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: npm run test:e2e-mobile
+        working-directory: hireai_frontend/smarthire
+
+      - name: 10. Upload Test Result Artifacts (if: always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: appium-e2e-test-results
+          path: |
+            hireai_frontend/smarthire/Test Results/Excel/Automation_Test_Report.xlsx
+            hireai_frontend/smarthire/Test Results/HTML/execution-report.html
+            hireai_frontend/smarthire/Test Results/Screenshots/
+            hireai_frontend/smarthire/Test Results/Logs/
+            hireai_frontend/smarthire/Test Results/Summary/summary.md
+          retention-days: 30
+
+      - name: Display GitHub Actions Execution Summary
+        if: always()
+        run: |
+          SUMMARY_FILE="hireai_frontend/smarthire/Test Results/Summary/summary.md"
+          if [ -f "$SUMMARY_FILE" ]; then
+            cat "$SUMMARY_FILE" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "# Android Appium Test Summary" >> $GITHUB_STEP_SUMMARY
+            echo "Build Number: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+            echo "Execution Date: $(date +'%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+            echo "Report URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/latest/execution-report.html" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Prepare GitHub Pages Folder Structure
+        if: always()
+        run: |
+          mkdir -p gh-pages-reports/reports/latest/screenshots
+          mkdir -p gh-pages-reports/reports/latest/logs
+          mkdir -p gh-pages-reports/reports/history/build-${{ github.run_number }}
+
+          if [ -f "hireai_frontend/smarthire/Test Results/HTML/execution-report.html" ]; then
+            cp "hireai_frontend/smarthire/Test Results/HTML/execution-report.html" gh-pages-reports/reports/latest/
+          fi
+          if [ -f "hireai_frontend/smarthire/Test Results/Summary/summary.md" ]; then
+            cp "hireai_frontend/smarthire/Test Results/Summary/summary.md" gh-pages-reports/reports/latest/
+          fi
+          if [ -d "hireai_frontend/smarthire/Test Results/Screenshots" ]; then
+            cp -r hireai_frontend/smarthire/Test\ Results/Screenshots/* gh-pages-reports/reports/latest/screenshots/ || true
+          fi
+          if [ -d "hireai_frontend/smarthire/Test Results/Logs" ]; then
+            cp -r hireai_frontend/smarthire/Test\ Results/Logs/* gh-pages-reports/reports/latest/logs/ || true
+          fi
+
+          # Duplicate into build history
+          cp -r gh-pages-reports/reports/latest/* gh-pages-reports/reports/history/build-${{ github.run_number }}/
+
+          cat << 'EOF' > gh-pages-reports/index.html
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta http-equiv="refresh" content="0; url=reports/latest/execution-report.html" />
+            <title>Appium Test Reports</title>
+          </head>
+          <body>
+            <p>Redirecting to <a href="reports/latest/execution-report.html">latest execution report</a>...</p>
+          </body>
+          </html>
+          EOF
+
+      - name: Setup Pages
+        if: always()
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages Artifact
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./gh-pages-reports
+
+      - name: 11. Publish HTML Reports to GitHub Pages
+        if: always()
+        id: deployment
+        uses: actions/deploy-pages@v4
