@@ -2,13 +2,13 @@ name: Android Appium E2E Tests & Report Generation
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: ["main", "master"]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: ["main", "master"]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -20,6 +20,7 @@ jobs:
   android-e2e:
     name: Run Appium E2E Tests & Deploy Reports
     runs-on: ubuntu-latest
+
     steps:
       - name: 1. Checkout Source Code
         uses: actions/checkout@v4
@@ -34,33 +35,29 @@ jobs:
       - name: 3. Setup Java Environment
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: "17"
 
       - name: 4. Setup Android SDK
         uses: android-actions/setup-android@v3
 
       - name: 5. Install Node Dependencies
-        env:
-          GITHUB_ACTIONS: ""
         run: npm ci
         working-directory: hireai_frontend/smarthire
 
-      - name: Install Appium & UiAutomator2 Driver
+      - name: Install Appium and UiAutomator2 Driver
         run: |
           npm install -g appium
-          npx appium driver install uiautomator2 || true
+          appium driver install uiautomator2
         working-directory: hireai_frontend/smarthire
 
       - name: 6. Build SmartHire Android Debug APK
-        env:
-          GITHUB_ACTIONS: ""
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
         working-directory: hireai_frontend/smarthire/android
 
-      - name: 7. Start Android Emulator & Install SmartHire APK
+      - name: 7. Start Android Emulator and Install APK
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
@@ -68,33 +65,30 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: |
-            echo "Waiting for emulator..."
             adb devices
-            echo "Installing SmartHire APK (com.smarthire.ai)..."
-            adb install hireai_frontend/smarthire/android/app/build/outputs/apk/debug/app-debug.apk || echo "APK installation complete"
+            adb install hireai_frontend/smarthire/android/app/build/outputs/apk/debug/app-debug.apk
 
-      - name: 8. Start Appium Server (Background Task)
+      - name: 8. Start Appium Server
         run: |
           npx appium --port 4723 --base-path /wd/hub > appium.log 2>&1 &
           sleep 5
-          curl -s http://localhost:4723/wd/hub/status || echo "Appium server started"
+          curl -f http://127.0.0.1:4723/wd/hub/status
         working-directory: hireai_frontend/smarthire
 
-      - name: 9. Start Next.js & Execute Appium E2E Tests (runner.ts)
+      - name: 9. Start Next.js and Execute Appium E2E Tests
         id: run_tests
         continue-on-error: true
         env:
-          GITHUB_ACTIONS: ""
           BASE_URL: "http://10.0.2.2:3000"
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          npm run dev -- --port 3000 &
-          sleep 10
+          npm run dev -- --hostname 0.0.0.0 --port 3000 > nextjs.log 2>&1 &
+          sleep 15
           npm run test:e2e-mobile
         working-directory: hireai_frontend/smarthire
 
-      - name: 10. Generate & Upload Artifacts (if: always)
+      - name: 10. Upload Test Result Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -105,68 +99,88 @@ jobs:
             hireai_frontend/smarthire/Test Results/Screenshots/
             hireai_frontend/smarthire/Test Results/Logs/
             hireai_frontend/smarthire/Test Results/Summary/summary.md
+            hireai_frontend/smarthire/appium.log
+            hireai_frontend/smarthire/nextjs.log
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Display GitHub Actions Execution Summary
         if: always()
         run: |
           SUMMARY_FILE="hireai_frontend/smarthire/Test Results/Summary/summary.md"
+
+          echo "# Android Appium Test Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Build Number: ${{ github.run_number }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Execution Date: $(date +'%Y-%m-%d')" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
           if [ -f "$SUMMARY_FILE" ]; then
-            cat "$SUMMARY_FILE" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "# Android Appium Test Summary" >> $GITHUB_STEP_SUMMARY
-            echo "Build Number: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-            echo "Execution Date: $(date +'%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
-            echo "Report URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/latest/execution-report.html" >> $GITHUB_STEP_SUMMARY
+            cat "$SUMMARY_FILE" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Prepare GitHub Pages Reports Directory Structure
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Report URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/latest/execution-report.html" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Prepare GitHub Pages Reports
         if: always()
         run: |
-          mkdir -p gh-pages-reports/reports/latest/screenshots
-          mkdir -p gh-pages-reports/reports/latest/logs
-          mkdir -p gh-pages-reports/reports/history/build-${{ github.run_number }}
+          mkdir -p "gh-pages-reports/reports/latest/screenshots"
+          mkdir -p "gh-pages-reports/reports/latest/logs"
+          mkdir -p "gh-pages-reports/reports/history/build-${{ github.run_number }}"
 
-          if [ -f "hireai_frontend/smarthire/Test Results/HTML/execution-report.html" ]; then
-            cp "hireai_frontend/smarthire/Test Results/HTML/execution-report.html" gh-pages-reports/reports/latest/
-          fi
-          if [ -f "hireai_frontend/smarthire/Test Results/Summary/summary.md" ]; then
-            cp "hireai_frontend/smarthire/Test Results/Summary/summary.md" gh-pages-reports/reports/latest/
-          fi
-          if [ -d "hireai_frontend/smarthire/Test Results/Screenshots" ]; then
-            cp -r hireai_frontend/smarthire/Test\ Results/Screenshots/* gh-pages-reports/reports/latest/screenshots/ || true
-          fi
-          if [ -d "hireai_frontend/smarthire/Test Results/Logs" ]; then
-            cp -r hireai_frontend/smarthire/Test\ Results/Logs/* gh-pages-reports/reports/latest/logs/ || true
+          HTML_REPORT="hireai_frontend/smarthire/Test Results/HTML/execution-report.html"
+          SUMMARY="hireai_frontend/smarthire/Test Results/Summary/summary.md"
+          SCREENSHOTS="hireai_frontend/smarthire/Test Results/Screenshots"
+          LOGS="hireai_frontend/smarthire/Test Results/Logs"
+
+          if [ -f "$HTML_REPORT" ]; then
+            cp "$HTML_REPORT" "gh-pages-reports/reports/latest/"
           fi
 
-          # Copy latest to history/build-XXX
-          cp -r gh-pages-reports/reports/latest/* gh-pages-reports/reports/history/build-${{ github.run_number }}/
+          if [ -f "$SUMMARY" ]; then
+            cp "$SUMMARY" "gh-pages-reports/reports/latest/"
+          fi
 
-          cat << 'EOF' > gh-pages-reports/index.html
+          if [ -d "$SCREENSHOTS" ]; then
+            cp -r "$SCREENSHOTS"/. "gh-pages-reports/reports/latest/screenshots/" || true
+          fi
+
+          if [ -d "$LOGS" ]; then
+            cp -r "$LOGS"/. "gh-pages-reports/reports/latest/logs/" || true
+          fi
+
+          cp -r "gh-pages-reports/reports/latest"/. \
+            "gh-pages-reports/reports/history/build-${{ github.run_number }}/"
+
+          cat > "gh-pages-reports/index.html" <<'EOF'
           <!DOCTYPE html>
           <html>
           <head>
-            <meta http-equiv="refresh" content="0; url=reports/latest/execution-report.html" />
-            <title>Appium Test Reports</title>
+            <meta http-equiv="refresh" content="0; url=reports/latest/execution-report.html">
+            <title>SmartHire Appium Test Reports</title>
           </head>
           <body>
-            <p>Redirecting to <a href="reports/latest/execution-report.html">latest execution report</a>...</p>
+            <p>
+              <a href="reports/latest/execution-report.html">
+                Open Latest Appium Execution Report
+              </a>
+            </p>
           </body>
           </html>
           EOF
 
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         if: always()
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
 
-      - name: Upload Pages Artifact
+      - name: Upload GitHub Pages Artifact
         if: always()
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./gh-pages-reports
 
-      - name: 12. Publish HTML Reports to GitHub Pages
+      - name: 11. Publish HTML Reports to GitHub Pages
         if: always()
         id: deployment
         uses: actions/deploy-pages@v4
