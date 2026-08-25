@@ -35,8 +35,8 @@ jobs:
       - name: 3. Setup Java Environment
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: "17"
+          distribution: 'temurin'
+          java-version: '21'
 
       - name: 4. Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -52,6 +52,8 @@ jobs:
         working-directory: hireai_frontend/smarthire
 
       - name: 6. Build SmartHire Android Debug APK
+        env:
+          GITHUB_ACTIONS: ""
         run: |
           npx cap sync android
           cd android
