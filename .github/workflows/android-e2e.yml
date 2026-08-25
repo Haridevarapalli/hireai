@@ -55,6 +55,7 @@ jobs:
         env:
           GITHUB_ACTIONS: ""
         run: |
+          node -v
           npx cap sync android
           cd android
           chmod +x gradlew
